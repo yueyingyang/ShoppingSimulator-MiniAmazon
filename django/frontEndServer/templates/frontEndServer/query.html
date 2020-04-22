@@ -1,0 +1,17 @@
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+{% load static %}
+
+<p>Query your package Status</p>
+<form method="POST">
+    {% csrf_token %}
+    <div> 
+    <input type="text" id="ups" name="ups" value="ups">
+    </div>
+    
+    <div> 
+    <input type="text" id="pkg" name="pkg" value="pkg">
+    <button class="btn btn-outline-info" type="submit" name="checkout" value="checkout">Query</button>
+    </div>
+
+</form>

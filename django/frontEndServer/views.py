@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Product, Package, Warehouse
-# from .forms import 
+from .forms import queryStatus
 import socket
 
 AMAZON_HOST, AMAZON_PORT = "vcm-12347.vm.duke.edu", 23333
@@ -39,6 +39,7 @@ def buy(request):
                 print(s)
                 with s:
                     s.sendall(str(pkg.id).encode('utf-8'))
+                    # to be more robust
                     print("finish sending")
                 return redirect('home')
             else:
@@ -57,3 +58,19 @@ def connect_amazon():
         return amazon_socket
     except:
         print('Failed to connect to Amazon backend')
+
+
+def query_status(request):
+    form = queryStatus()
+    if request.method == 'POST':
+        # if use pkg id to query
+        if 'ups' in request.POST:
+            # filter in db
+            return redirect('query')
+        # if use ups account to query
+        if 'pkg' in request.POST:
+            # filter in db
+            return redirect('query')
+    context = {}
+    return render(request, 'frontEndServer/query.html', context)
+

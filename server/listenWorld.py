@@ -50,22 +50,34 @@ def listen_world(socket, ups_socket, db, world_acks, world_seqs):
             
             for come_ready in response.ready: # repeated APacked ready = 2;
                 ack_back_world(socket, come_ready.seqnum)
+                # update status to packed
+                update_pkg_status(db, 4, (come_ready.shipid,))
                 # tell ups to pickup
                 print("tell ups to pickup")
                 au_pickup(ups_socket, come_ready.shipid)
-                # update status to packed
+
             
             for come_loaded in response.loaded: # repeated ALoaded loaded = 3;
                 ack_back_world(socket, come_loaded.seqnum)
-                # NO UPS WILL DELIVER ITSELF, SO NO UPS_deliver()
                 # update status to loaded
+                update_pkg_status(db, 6, (come_loaded.shipid,))
+                # tell ups to deliver
                 print("tell ups to deliver")
                 au_deliver(ups_socket, come_loaded, buyseq_shipid[come_loaded.shipid])
+                # update status to delivering 
+                '''
+                wired
+                '''
+                update_pkg_status(db, 7, (come_loaded.shipid,))
 
+
+            '''
+            Maybe unnecessay
+            '''
             for come_packagestatus in response.packagestatus:
                 ack_back_world(socket, come_packagestatus.seqnum)
                 # tell world query
                 packageid = come_packagestatus.packageid
                 status = come_packagestatus.status
-                query_seq = come_packagestatus.seqnum
                 # abstract and send back to front-end
+

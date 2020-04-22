@@ -11,9 +11,9 @@ from listenWorld import listen_world
 from listenUps import listen_ups
 from listenDjango import listen_django
 
-UPS_HOST, UPS_PORT = "vcm-13659.vm.duke.edu", 5555
+UPS_HOST, UPS_PORT = "vcm-12347.vm.duke.edu", 5555
 WORLD_HOST, WORLD_PORT = "vcm-13659.vm.duke.edu", 23456
-DJANGO_HOST, DJANGO_PORT = "vcm-13659.vm.duke.edu", 23333
+DJANGO_HOST, DJANGO_PORT = "vcm-12347.vm.duke.edu", 23333
 
 
 NUM_WH = 3

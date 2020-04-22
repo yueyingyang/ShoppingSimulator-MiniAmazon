@@ -51,6 +51,7 @@ message UtoALoadRequest
     required int64 seqNum = 1;
     required int64 warehouseId = 2; // warehouse id
     required int64 truckId = 3;
+    repeated int64 shipId = 4;
 }
 
 // Amazon will send the information to UPS, there's no need for UPS to know the product ID
@@ -75,7 +76,7 @@ message ShipInfo
 message AtoULoadFinishRequest 
 {
     required int64 seqNum = 1; 
-repeated int64 shipId = 2;  // Detailed packge info was already sent to UPS in        
+    repeated int64 shipId = 2;  // Detailed packge info was already sent to UPS in        
                                                  // AtoUPickupRequest
 // errMsg is not needed, because each AtoUCommand has repeated ErrorMessage field
     required int64 truckId = 3;

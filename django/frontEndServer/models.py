@@ -24,6 +24,7 @@ class Package(models.Model):
     LOADED = 6
     DELIVERING = 7
     DELIVERED = 8
+    CANCEL = 9
 
     PKG_STATUS = [
         (CREATED, 'CREATED'),
@@ -34,9 +35,11 @@ class Package(models.Model):
         (LOADING, 'LOADING'),
         (LOADED, 'LOADED'),
         (DELIVERING, 'DELIVERING'),
-        (DELIVERED, 'DELIVERED')
+        (DELIVERED, 'DELIVERED'),
+        (CANCEL, 'CANCEL')
     ]
     status = models.IntegerField(default=CREATED, choices=PKG_STATUS)
+    upsAccount = models.TextField(default=None, blank=True, null=True)
 
 
 # Front end catalog

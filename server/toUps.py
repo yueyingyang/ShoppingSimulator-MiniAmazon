@@ -59,28 +59,50 @@ def ua_validated(user):
     print("send validate")
 
 
-def au_pickup(ups_socket, shipId, ship_info):
-    #todo: q_pkg_id
+# def au_pickup(ups_socket, shipId):
+#     #todo: q_pkg_id
+#     global debug_shipid
+#     seqnum = next(gen)
+#     pickup = UA_pb2.AtoUCommand()
+#     ship_list = []
+#     prods_list = []
+#     # pickup.pikReq.shipment.products
+#     for prod in ship_info.things:
+#         item = UA_pb2.Product(description=prod.description, count=prod.count)
+#         prods_list.append(item)
+#     # pickup.pikReq.shipment.products 
+#     ship = UA_pb2.ShipInfo(shipId=shipId, products=prods_list, 
+#                                 destination_x=1,destination_y=1)
+#     ship_list.append(ship) # pickup.pickReq.shipment
+#     pickup.pikReq.add(seqNum=seqnum, warehouseId=ship_info.whnum, shipment=ship_list)
+#     # pickup.pickReq
+#     my_send(ups_socket, pickup)    
+#     debug_shipid = shipId
+#     # while seqnum not in acks:
+#     #     time.sleep(RESEND_INTERVAL)
+#     #     my_send(ups_socket, pickup)
+
+def au_pickup(ups_socket, shipId):
     global debug_shipid
-    seqnum = next(gen)
-    pickup = UA_pb2.AtoUCommand()
-    ship_list = []
-    prods_list = []
-    # pickup.pikReq.shipment.products
-    for prod in ship_info.things:
-        item = UA_pb2.Product(description=prod.description, count=prod.count)
-        prods_list.append(item)
-    # pickup.pikReq.shipment.products 
-    ship = UA_pb2.ShipInfo(shipId=shipId, products=prods_list, 
-                                destination_x=1,destination_y=1)
-    ship_list.append(ship) # pickup.pickReq.shipment
-    pickup.pikReq.add(seqNum=seqnum, warehouseId=ship_info.whnum, shipment=ship_list)
-    # pickup.pickReq
-    my_send(ups_socket, pickup)    
+    au_command = UA_pb2.AtoUCommand()  
+    # find wh/x/y/buystr from db
+    pickup = au_command.pikReq.add()
+    pkg = q_pkg_id(db, shipId)
+    pickup.seqNum = next(gen)
+    pickup.warehouseId = pkg[0]
+    newship = pickup.shipment.add()
+    newship.shipId = shipId
+    if pkg[6] is not None:
+        newship.UPSaccount = pkg[6]
+    # parse purchase_list
+    buy = getListfromStr(pkg[4])
+    for item in buy:
+        newship.products.add(description = item['description'], count = item['count'])
+    newship.destination_x = pkg[2]
+    newship.destination_y = pkg[3]
+    # send to ups
+    my_send(ups_socket, au_command)
     debug_shipid = shipId
-    # while seqnum not in acks:
-    #     time.sleep(RESEND_INTERVAL)
-    #     my_send(ups_socket, pickup)
 
 
 def ua_toload(world_socket, load):

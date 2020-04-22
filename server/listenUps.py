@@ -22,6 +22,8 @@ def listen_ups(ups_socket, world_socket):
                 ua_validated(user)
             for to_load in command.loadReq:
                 ua_toload(world_socket, to_load)
+                # update status to loading
+                update_pkg_status(db, 5, (to_load.shipid,))
             for delivered in command.delivery:
                 ua_delivered(delivered)
             for _ in command.ack:
