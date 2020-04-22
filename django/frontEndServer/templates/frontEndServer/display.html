@@ -1,0 +1,24 @@
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+{% load static %}
+
+<p>All Pruducts</p>
+<form method="POST">
+    {% csrf_token %}
+    {% if products.exists %}
+        {% for item in products %}
+            {{item.description}}
+            <input type="checkbox" id = "mycheck" name="choose" value="{{ item.id }}" >
+            <input type="number" id="count" name="count" min=1 value=1>        
+
+        {% endfor %}
+    {% endif %} 
+
+    <br>
+
+    <br>
+    <div class="col-4">
+        <button class="btn btn-outline-info" type="submit" name="checkout" value="checkout">Check out</button>
+    </div>
+</form>
+
