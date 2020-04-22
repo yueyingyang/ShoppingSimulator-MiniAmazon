@@ -1,0 +1,121 @@
+/***
+Procedure:
+	UPS connects to world, sends UtoAConnect to Amazon
+	Amazon receives order, sends UserValidationRequest to UPS (optional)
+	UPS sends UserValidationResponse to Amazon (if received request)
+	If validated, Amazon sends Apack to world (after purchase inventory)
+	After received APacked from world, Amazon sends AtoUPickupRequest to UPS
+	UPS tells world to UGoPickup
+	After received UFinished and validated status, UPS sends UtoALoadRequest to Amazon
+	Amazon tells world APutOnTruck
+	After received ALoaded, Amazon sends AtoULoadFinishRequest to UPS
+	UPS tells world UGoDeliver
+	After received UDeliveryMade, UPS sends Delivery to Amazon
+***/
+
+syntax = "proto2";
+
+// UPS first connect to the world, send world id to amazon
+message UtoAConnect 
+{
+    required int64 seqNum = 1;
+    required int64 worldId = 2;
+}
+
+// Amazon to UPS, for user verification
+message UserValidationRequest
+{
+    required int64 seqNum = 1;
+    required string UPSaccount = 2; // keep consistent with UPSaccount in ShipInfo
+}
+
+// UPS to Amazon, response of user verification
+message UserValidationResponse
+{
+    required int64 seqNum = 1;
+    required bool result = 2;
+}
+
+// Amazon asks UPS to go to a warehouse, and pick up a package 
+message AtoUPickupRequest 
+{
+    required int64 seqNum = 1;
+    required int64 warehouseId = 2; // warehouse id
+    repeated ShipInfo shipment = 3; // UPS needs to know package info since it is created/packed,
+                            // including tracking number, items, delivery address, and optional UPS account
+}
+
+// UPS truck has arrived at warehouse, Amazon can load now
+message UtoALoadRequest 
+{
+    required int64 seqNum = 1;
+    required int64 warehouseId = 2; // warehouse id
+    required int64 truckId = 3;
+}
+
+// Amazon will send the information to UPS, there's no need for UPS to know the product ID
+message Product 
+{
+    required string description = 1;
+    required int32 count = 2;
+}
+
+// Amazon send to UPS about the shipment information
+message ShipInfo
+{ 
+    required int64 shipId = 1;
+    optional string UPSaccount = 2;
+    repeated Product products = 3;
+    required int64 destination_x = 4; 
+    required int64 destination_y = 5;
+} 
+
+// UPS send to Amazon, loading has completed
+// Amazon send to UPS, loading has completed
+message AtoULoadFinishRequest 
+{
+    required int64 seqNum = 1; 
+repeated int64 shipId = 2;  // Detailed packge info was already sent to UPS in        
+                                                 // AtoUPickupRequest
+// errMsg is not needed, because each AtoUCommand has repeated ErrorMessage field
+    required int64 truckId = 3;
+}
+
+// UPS tells Amazon delivery completed
+message Delivery
+{
+    required int64 seqNum = 1;
+    required int64 shipId = 2;
+                                                                                             // UtoACommand
+}
+
+// Amazon to UPS command type
+message AtoUCommand 
+{
+    repeated UserValidationRequest usrVlid = 1;
+    repeated AtoUPickupRequest pikReq = 2;
+    repeated AtoULoadFinishRequest loadReq = 3;
+    repeated ErrorMessage errMsg = 4;
+    repeated int64 ack = 5;
+    optional bool disconnection = 6;
+}
+
+// UPS to Amazon command type
+message UtoACommand 
+{
+    repeated UtoAConnect connection = 1;
+    repeated UserValidationResponse usrVlid = 2;
+    repeated UtoALoadRequest loadReq = 3;
+    repeated Delivery delivery = 4;
+    repeated ErrorMessage errMsg = 5;
+    repeated int64 ack = 6;
+    optional bool disconnection = 7;
+}
+
+// for debugging
+message ErrorMessage 
+{
+    required string err = 1;
+    required int64 originseqnum = 2;
+    required int64 seqNum = 3;
+}
