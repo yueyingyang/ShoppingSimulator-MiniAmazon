@@ -40,11 +40,12 @@ def listen_django(D_HOST, D_PORT, world_socket, ups_socket, db, world_acks):
             2.1 Check status == Created
             2.2 Get item_str
         '''
-        data = django_s.recv(65536)
+        data = django_s.recv(65535)
+        d1 = data.decode('utf-8')
         print("---------------- Message from Django ----------")
-        print(data)
+        print(d1)
         print("-----------------------------------------------")
-        pkg_id = int(data)
+        pkg_id = int(d1)
         pkg_info = q_pkg_id(db, pkg_id)
         item_str = pkg_info[4]
         whnum = find_near_wh(db, pkg_info[2], pkg_info[3])

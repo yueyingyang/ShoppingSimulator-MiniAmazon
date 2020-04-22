@@ -3,6 +3,7 @@ from .models import Product, Package, Warehouse
 # from .forms import 
 import socket
 
+AMAZON_HOST, AMAZON_PORT = "vcm-12347.vm.duke.edu", 23333
 
 def home(request):
     return render(request, 'frontEndServer/home.html', {})
@@ -33,7 +34,12 @@ def buy(request):
                 pkg = Package.objects.create(item_str = buy_str)
                 pkg.save()
                 print(pkg.id)
-                # send(amazon_socket, buy_str)
+                s = connect_amazon()
+                print("================== socket =================")
+                print(s)
+                with s:
+                    s.sendall(str(pkg.id).encode('utf-8'))
+                    print("finish sending")
                 return redirect('home')
             else:
                 return redirect('display')   
@@ -41,3 +47,13 @@ def buy(request):
     return render(request, 'frontEndServer/display.html', context)
 
 # Create your views here.
+
+def connect_amazon():
+    amazon_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    amazon_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+    try:
+        amazon_socket.connect((AMAZON_HOST, AMAZON_PORT))
+        print('Connected to Amazon backend')
+        return amazon_socket
+    except:
+        print('Failed to connect to Amazon backend')
