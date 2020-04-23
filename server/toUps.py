@@ -27,7 +27,9 @@ gen = infinite_sequence()
 def ack_back_ups(ups_socket, seqnum):
     ack_command = UA_pb2.AtoUCommand()
     ack_command.ack.append(seqnum)
+    print("---------------- ACK back to UPS --------------")
     print(ack_command)
+    print("-----------------------------------------------")
     my_send(ups_socket, ack_command)
 
     
@@ -64,30 +66,25 @@ def au_pickup(db, ups_socket, shipId, ups_acks):
     # find wh/x/y/buystr from db
     pickup = au_command.pikReq.add()
     pkg = q_pkg_id(db, shipId)
+    print(pkg)
     pickup.seqNum = seqnum
-    pickup.warehouseId = pkg[0]
+    pickup.warehouseId = pkg[6]
     newship = pickup.shipment.add()
     newship.shipId = shipId
-    if pkg[6] is not None:
-        newship.UPSaccount = pkg[6]
+    if pkg[7] is not None:
+        newship.UPSaccount = pkg[7]
     # parse purchase_list
     buy = getListfromStr(pkg[4])
     for item in buy:
         newship.products.add(description = item['description'], count = item['count'])
     newship.destination_x = pkg[2]
     newship.destination_y = pkg[3]
-    if pkg[7] != "":
-        newship.UPSaccount = pkg[7]
     # send to ups
     my_send(ups_socket, au_command)
     while seqnum not in ups_acks:
         time.sleep(RESEND_INTERVAL)
-        my_send(ups_socket, pickup)
+        my_send(ups_socket, au_command)
 
-
-
-    
-    
 
 def au_deliver(db, ups_socket, loaded, ups_acks):
     ship_list = [loaded.shipid]
@@ -100,4 +97,6 @@ def au_deliver(db, ups_socket, loaded, ups_acks):
         while seqnum not in ups_acks:
             time.sleep(RESEND_INTERVAL)
             my_send(ups_socket, deliver)
+    # update status to delivering 
+    update_pkg_status(db, 7, (loaded.shipid,))
         

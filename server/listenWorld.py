@@ -13,12 +13,15 @@ shipid = 0
 def listen_world(socket, ups_socket, db, world_acks, world_seqs, ups_acks, ups_seqs):
     global buyseq_shipid 
 
-    print("================Start to listen the world======\n")
+    print("========== Start to listen the world ==========\n")
     while True:
         # world_command_updated = True
         response = recv_world(socket)
         world_command = world_amazon_pb2.ACommands()
         if response is not None: 
+            print("---------------- Message from world ----------")
+            print(response)
+            print("-----------------------------------------------")
             if response.finished:
                 print("End world.")
             
@@ -47,8 +50,7 @@ def listen_world(socket, ups_socket, db, world_acks, world_seqs, ups_acks, ups_s
                 2. Send world APack
                 3. Update status to PACKING
                 '''
-                # threading.Thread(target=world_pack, args=(socket, come_arrived.whnum, come_arrived.things, pkg_id)).start()
-                world_pack(db, socket, world_acks, come_arrived.whnum, come_arrived.things, pkg_id)
+                threading.Thread(target=world_pack, args=(db, socket, world_acks, come_arrived.whnum, come_arrived.things, pkg_id)).start()
                 update_pkg_status(db, 3, (pkg_id,))
             
             for come_ready in response.ready: # repeated APacked ready = 2;
@@ -57,8 +59,8 @@ def listen_world(socket, ups_socket, db, world_acks, world_seqs, ups_acks, ups_s
                 update_pkg_status(db, 4, (come_ready.shipid,))
                 # tell ups to pickup
                 print("tell ups to pickup")
-                # threading.Thread(target=au_pickup, args=(db, ups_socket, come_ready.shipid, ups_acks)).start()
-                au_pickup(db, ups_socket, come_ready.shipid, ups_acks)
+                threading.Thread(target=au_pickup, args=(db, ups_socket, come_ready.shipid, ups_acks)).start()
+                # au_pickup(db, ups_socket, come_ready.shipid, ups_acks)
 
             
             for come_loaded in response.loaded: # repeated ALoaded loaded = 3;
@@ -67,12 +69,9 @@ def listen_world(socket, ups_socket, db, world_acks, world_seqs, ups_acks, ups_s
                 update_pkg_status(db, 6, (come_loaded.shipid,))
                 # tell ups to deliver
                 print("tell ups to deliver")
-                au_deliver(db, ups_socket, come_loaded, ups_acks)
-                # update status to delivering 
-                '''
-                wired
-                '''
-                update_pkg_status(db, 7, (come_loaded.shipid,))
+                threading.Thread(target=au_deliver, args=(db, ups_socket, come_loaded, ups_acks)).start()
+                
+                
 
 
             '''

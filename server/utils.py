@@ -22,9 +22,10 @@ def my_recv(socket):
 
 # send message
 def my_send(s, message):
-    print("======================send===============")
+    print("------------------ Send Message ---------------\n")
+    print(s)
     print(message)
-    print("==========================================")
+    print("-----------------------------------------------\n")
     hdr = []
     _EncodeVarint(hdr.append, len(message.SerializeToString()), None)
     s.sendall(b"".join(hdr))
