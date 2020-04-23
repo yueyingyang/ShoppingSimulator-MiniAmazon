@@ -1,5 +1,11 @@
 from random import random, randint
 
+def update_truck_id(db, tid, sid_list):
+    cursor = db.cursor()
+    cursor.execute('UPDATE "frontEndServer_package" SET "truck_id" = %s WHERE "id" = %s', (tid, sid_list))
+    db.commit()   
+    print('[INFO][UPDATE PACKAGE][TRUCK_ID] %s TO [%s]', sid_list, tid)
+
 def select_dist(e):
     return e['dist']
 

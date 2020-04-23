@@ -9,15 +9,15 @@ from google.protobuf.internal.encoder import _EncodeVarint
 # Import other 
 import UA_pb2
 import world_amazon_pb2 
-from utils import my_recv, my_send
+from utils import my_recv, my_send, getListfromStr
 from toWorld import world_load
+from execTable import q_pkg_id, update_pkg_status
 
 RESEND_INTERVAL = 5
 shiptruck_dict = dict()
-debug_shipid = -1
 
 def infinite_sequence():
-    num = 0
+    num = 100
     while True:
         yield num
         num += 1
@@ -35,10 +35,9 @@ def ua_connect(ups_socket):
     response = my_recv(ups_socket)
     command = UA_pb2.UtoACommand()
     command.ParseFromString(response)
-    conns = command.connection
-    for conn in conns:
+    for conn in command.connection:
+        ack_back_ups(ups_socket, conn.seqNum)
         print(conn)
-        # ack_back_ups(ups_socket, conn.seqNum)
         recv_world_id = conn.worldId
         return recv_world_id
 
@@ -59,36 +58,13 @@ def ua_validated(user):
     print("send validate")
 
 
-# def au_pickup(ups_socket, shipId):
-#     #todo: q_pkg_id
-#     global debug_shipid
-#     seqnum = next(gen)
-#     pickup = UA_pb2.AtoUCommand()
-#     ship_list = []
-#     prods_list = []
-#     # pickup.pikReq.shipment.products
-#     for prod in ship_info.things:
-#         item = UA_pb2.Product(description=prod.description, count=prod.count)
-#         prods_list.append(item)
-#     # pickup.pikReq.shipment.products 
-#     ship = UA_pb2.ShipInfo(shipId=shipId, products=prods_list, 
-#                                 destination_x=1,destination_y=1)
-#     ship_list.append(ship) # pickup.pickReq.shipment
-#     pickup.pikReq.add(seqNum=seqnum, warehouseId=ship_info.whnum, shipment=ship_list)
-#     # pickup.pickReq
-#     my_send(ups_socket, pickup)    
-#     debug_shipid = shipId
-#     # while seqnum not in acks:
-#     #     time.sleep(RESEND_INTERVAL)
-#     #     my_send(ups_socket, pickup)
-
-def au_pickup(ups_socket, shipId):
-    global debug_shipid
+def au_pickup(db, ups_socket, shipId, ups_acks):
+    seqnum = next(gen)
     au_command = UA_pb2.AtoUCommand()  
     # find wh/x/y/buystr from db
     pickup = au_command.pikReq.add()
     pkg = q_pkg_id(db, shipId)
-    pickup.seqNum = next(gen)
+    pickup.seqNum = seqnum
     pickup.warehouseId = pkg[0]
     newship = pickup.shipment.add()
     newship.shipId = shipId
@@ -100,31 +76,28 @@ def au_pickup(ups_socket, shipId):
         newship.products.add(description = item['description'], count = item['count'])
     newship.destination_x = pkg[2]
     newship.destination_y = pkg[3]
+    if pkg[7] != "":
+        newship.UPSaccount = pkg[7]
     # send to ups
     my_send(ups_socket, au_command)
-    debug_shipid = shipId
+    while seqnum not in ups_acks:
+        time.sleep(RESEND_INTERVAL)
+        my_send(ups_socket, pickup)
 
 
-def ua_toload(world_socket, load):
-    print("send to load")
-    # ack_back_ups(load.seqnum)
-    shiptruck_dict[debug_shipid] = load.truckId
-    world_load(world_socket, load.warehouseId, load.truckId, debug_shipid)
+
+    
     
 
-def au_deliver(ups_socket, loaded, shipinfo):
-    seqnum = next(gen)
+def au_deliver(db, ups_socket, loaded, ups_acks):
     ship_list = [loaded.shipid]
-    deliver = UA_pb2.AtoUCommand()
-    deliver.loadReq.add(seqNum=seqnum, shipId=ship_list, truckId=shiptruck_dict[loaded.shipid])
-    my_send(ups_socket, deliver)    
-
-    # while seqnum not in acks:
-    #     time.sleep(RESEND_INTERVAL)
-    #     my_send(ups_socket, deliver)
-
-
-def ua_delivered(delivered):
-    # ack_back_ups(delivered.seqnum)
-    # todo: update db
-    print("send delivered")
+    # shipinfo
+    for sid in ship_list:
+        deliver = UA_pb2.AtoUCommand()
+        seqnum = next(gen)
+        deliver.loadReq.add(seqNum=seqnum, shipId=sid, truckId=q_pkg_id(db, sid)[1])
+        my_send(ups_socket, deliver)    
+        while seqnum not in ups_acks:
+            time.sleep(RESEND_INTERVAL)
+            my_send(ups_socket, deliver)
+        

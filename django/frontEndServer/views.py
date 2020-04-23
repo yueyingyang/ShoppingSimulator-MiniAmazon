@@ -11,6 +11,7 @@ def home(request):
 def buy(request):
     model = Product
     products = Product.objects.all()
+    showid = None
     if request.method == 'POST':
         if 'checkout' in request.POST:
             if 'choose' in request.POST: 
@@ -34,6 +35,7 @@ def buy(request):
                 pkg = Package.objects.create(item_str = buy_str)
                 pkg.save()
                 print(pkg.id)
+                showid = pkg.id
                 s = connect_amazon()
                 print("================== socket =================")
                 print(s)
@@ -41,10 +43,10 @@ def buy(request):
                     s.sendall(str(pkg.id).encode('utf-8'))
                     # to be more robust
                     print("finish sending")
-                return redirect('home')
+                # return redirect('home')
             else:
-                return redirect('display')   
-    context = {'products': products}
+                return redirect('buy')   
+    context = {'products': products, 'showid':showid}
     return render(request, 'frontEndServer/display.html', context)
 
 # Create your views here.
@@ -68,9 +70,11 @@ def query_status(request):
             # filter in db
             return redirect('query')
         # if use ups account to query
-        if 'pkg' in request.POST:
+        elif 'pkg' in request.POST:
             # filter in db
             return redirect('query')
+        else:
+            return redirect('query')  
     context = {}
     return render(request, 'frontEndServer/query.html', context)
 

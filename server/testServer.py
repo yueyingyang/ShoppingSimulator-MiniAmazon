@@ -12,7 +12,7 @@ from listenUps import listen_ups
 from listenDjango import listen_django
 
 UPS_HOST, UPS_PORT = "vcm-12347.vm.duke.edu", 5555
-WORLD_HOST, WORLD_PORT = "vcm-13659.vm.duke.edu", 23456
+WORLD_HOST, WORLD_PORT = "vcm-12347.vm.duke.edu", 23456
 DJANGO_HOST, DJANGO_PORT = "vcm-12347.vm.duke.edu", 23333
 
 
@@ -29,6 +29,8 @@ if __name__ == "__main__":
     global world_seqs
     world_acks = set()
     world_seqs = set()
+    ups_acks = set()
+    ups_seqs = set()
 
     # Connect to database
     db = connect_db()
@@ -49,9 +51,9 @@ if __name__ == "__main__":
         # record the shipid with APurchase:buy command as a dict
 
         # Listen 2 socket.
-        listenWorld = threading.Thread(target=listen_world, args=(world_socket, ups_socket, db, world_acks, world_seqs,))
+        listenWorld = threading.Thread(target=listen_world, args=(world_socket, ups_socket, db, world_acks, world_seqs, ups_acks, ups_seqs))
         listenWorld.start()
-        listenUps = threading.Thread(target=listen_ups, args=(ups_socket, world_socket,))
+        listenUps = threading.Thread(target=listen_ups, args=(ups_socket, world_socket, db, world_acks, world_seqs, ups_acks, ups_seqs))
         listenUps.start()
         listenDjango = threading.Thread(target=listen_django, args=(DJANGO_HOST, DJANGO_PORT, world_socket, ups_socket, db, world_acks,))
         listenDjango.start()
