@@ -99,7 +99,7 @@ def world_query(world_socket, world_command, shipid):
 def ack_back_world(world_socket, seqNum):
     world_command = world_amazon_pb2.ACommands()
     world_command.acks.append(seqNum)
-    print("---------------- ACK back to UPS --------------")
+    print("---------------- ACK back to world ------------")
     my_send(world_socket, world_command)
     print(world_command)
     print("-----------------------------------------------")

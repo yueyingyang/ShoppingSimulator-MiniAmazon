@@ -31,7 +31,7 @@ def send_ups(ups_socket, au_command, seqnum, ups_acks):
 
 def ack_back_ups(ups_socket, seqnum):
     ack_command = UA_pb2.AtoUCommand()
-    ack_command.ack.append(next(gen))
+    ack_command.ack.append(seqnum)
     print("---------------- ACK back to UPS --------------")
     my_send(ups_socket, ack_command)
     

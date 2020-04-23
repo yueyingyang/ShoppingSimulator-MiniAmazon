@@ -27,6 +27,7 @@ def listen_ups(ups_socket, world_socket, db, world_acks, world_seqs, ups_acks, u
             for user in command.usrVlid:
                 # avoid repeated handle
                 if user.seqNum in ups_seqs:
+                    ack_back_ups(ups_socket, user.seqNum)
                     continue
                 ups_seqs.add(user.seqNum)
                 ack_back_ups(ups_socket, user.seqNum)
@@ -34,10 +35,10 @@ def listen_ups(ups_socket, world_socket, db, world_acks, world_seqs, ups_acks, u
             
             for to_load in command.loadReq:
                 # avoid repeated handle
+                ack_back_ups(ups_socket, to_load.seqNum)
                 if to_load.seqNum in ups_seqs:
                     continue
                 ups_seqs.add(to_load.seqNum)
-                ack_back_ups(ups_socket, to_load.seqNum)
                 threading.Thread(target=world_load, args=(db, world_socket, to_load.warehouseId, to_load.truckId, to_load.shipId, world_acks))  
                 sid_plain_list = ()
                 for sid in to_load.shipId:
@@ -46,10 +47,10 @@ def listen_ups(ups_socket, world_socket, db, world_acks, world_seqs, ups_acks, u
             
             for delivered in command.delivery:
                 # avoid repeated handle
+                ack_back_ups(ups_socket, delivered.seqNum)
                 if delivered.seqNum in ups_seqs:
                     continue
                 ups_seqs.add(delivered.seqNum)
-                ack_back_ups(ups_socket, delivered.seqNum)
                 update_pkg_status(db, 8, delivered.shipId)
 
             for _ in command.ack:
