@@ -93,7 +93,7 @@ def au_deliver(db, ups_socket, loaded, ups_acks):
     for sid in ship_list:
         deliver = UA_pb2.AtoUCommand()
         seqnum = next(gen)
-        deliver.loadReq.add(seqNum=seqnum, shipId=sid, truckId=q_pkg_id(db, sid)[1])   
+        deliver.loadReq.add(seqNum=seqnum, shipId=ship_list, truckId=q_pkg_id(db, sid)[1])   
         send_ups(ups_socket, deliver, seqnum, ups_acks)
     # update status to delivering 
     update_pkg_status(db, 7, (loaded.shipid,))

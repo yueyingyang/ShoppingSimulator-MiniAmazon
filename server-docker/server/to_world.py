@@ -78,10 +78,9 @@ def world_load(db, world_socket, whnum, truckid, sid_list, world_acks):
         go_load.truckid = truckid
         go_load.shipid = sid
         go_load.seqnum = seqnum
-        my_send(socket, world_command)
         send_world(world_socket, world_command, seqnum, world_acks)
         # update status to loading
-        update_pkg_status(db, 5, sid_list)
+        update_pkg_status(db, 5, (sid,))
 
 def world_disconnect(world_socket):
     world_command = world_amazon_pb2.ACommands()

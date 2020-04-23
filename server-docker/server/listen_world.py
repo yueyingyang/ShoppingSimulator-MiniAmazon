@@ -10,13 +10,13 @@ from exec_db import q_pkg_by_item, update_pkg_status
 buyseq_shipid = dict()
 shipid = 0
 
-def listen_world(socket, ups_socket, db, world_acks, world_seqs, ups_acks, ups_seqs):
+def listen_world(world_socket, ups_socket, db, world_acks, world_seqs, ups_acks, ups_seqs):
     global buyseq_shipid 
 
     print("========== Start to listen the world ==========\n")
     while True:
         try:
-            response = recv_world(socket)
+            response = recv_world(world_socket)
         except Exception as e:
             print("-------------- World Recv Failure ------------\n")
             break
@@ -36,7 +36,7 @@ def listen_world(socket, ups_socket, db, world_acks, world_seqs, ups_acks, ups_s
 
             for come_arrived in response.arrived: # repeated APurchaseMore arrived = 1;
                 # ack back to world
-                ack_back_world(socket, come_arrived.seqnum)
+                ack_back_world(world_socket, come_arrived.seqnum)
                 # avoid handle same message
                 if come_arrived.seqnum in world_seqs:
                     continue
@@ -52,11 +52,11 @@ def listen_world(socket, ups_socket, db, world_acks, world_seqs, ups_acks, ups_s
                 2. Send world APack
                 3. Update status to PACKING
                 '''
-                threading.Thread(target=world_pack, args=(db, socket, world_acks, come_arrived.whnum, come_arrived.things, pkg_id)).start()
+                threading.Thread(target=world_pack, args=(db, world_socket, world_acks, come_arrived.whnum, come_arrived.things, pkg_id)).start()
                 update_pkg_status(db, 3, (pkg_id,))
             
             for come_ready in response.ready: # repeated APacked ready = 2;
-                ack_back_world(socket, come_ready.seqnum)
+                ack_back_world(world_socket, come_ready.seqnum)
                 # update status to packed
                 update_pkg_status(db, 4, (come_ready.shipid,))
                 # tell ups to pickup
@@ -66,7 +66,7 @@ def listen_world(socket, ups_socket, db, world_acks, world_seqs, ups_acks, ups_s
 
             
             for come_loaded in response.loaded: # repeated ALoaded loaded = 3;
-                ack_back_world(socket, come_loaded.seqnum)
+                ack_back_world(world_socket, come_loaded.seqnum)
                 # update status to loaded
                 update_pkg_status(db, 6, (come_loaded.shipid,))
                 # tell ups to deliver
@@ -80,7 +80,7 @@ def listen_world(socket, ups_socket, db, world_acks, world_seqs, ups_acks, ups_s
             Maybe unnecessay
             '''
             for come_packagestatus in response.packagestatus:
-                ack_back_world(socket, come_packagestatus.seqnum)
+                ack_back_world(world_socket, come_packagestatus.seqnum)
                 # tell world query
                 packageid = come_packagestatus.packageid
                 status = come_packagestatus.status

@@ -39,7 +39,7 @@ def listen_ups(ups_socket, world_socket, db, world_acks, world_seqs, ups_acks, u
                 if to_load.seqNum in ups_seqs:
                     continue
                 ups_seqs.add(to_load.seqNum)
-                threading.Thread(target=world_load, args=(db, world_socket, to_load.warehouseId, to_load.truckId, to_load.shipId, world_acks))  
+                threading.Thread(target=world_load, args=(db, world_socket, to_load.warehouseId, to_load.truckId, to_load.shipId, world_acks)).start() 
                 sid_plain_list = ()
                 for sid in to_load.shipId:
                     sid_plain_list += (sid,) 
