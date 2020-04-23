@@ -4,7 +4,7 @@ import threading
 from utils import my_recv, my_send, parse_list_to_str
 from to_world import recv_world, ack_back_world, world_pack
 from to_ups import au_pickup, au_deliver
-from exec_db import q_pkg_by_item, update_pkg_status
+from exec_db import q_pkg_by_item, update_pkg_status, q_pkg_id
 
 
 buyseq_shipid = dict()
@@ -57,6 +57,9 @@ def listen_world(world_socket, ups_socket, db, world_acks, world_seqs, ups_acks,
             
             for come_ready in response.ready: # repeated APacked ready = 2;
                 ack_back_world(world_socket, come_ready.seqnum)
+                # If pkg is cancelled, dont send pick up.
+                if q_pkg_id(db, come_ready.shipid)[5] == 9:
+                    continue
                 # update status to packed
                 update_pkg_status(db, 4, (come_ready.shipid,))
                 # tell ups to pickup

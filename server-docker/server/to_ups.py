@@ -10,8 +10,8 @@ from google.protobuf.internal.encoder import _EncodeVarint
 import UA_pb2
 import world_amazon_pb2 
 from utils import my_recv, my_send, getListfromStr
-from to_world import world_load
-from exec_db import q_pkg_id, update_pkg_status
+from to_world import world_load, world_buy
+from exec_db import q_pkg_id, update_pkg_status, find_near_wh, add_wh_info
 
 RESEND_INTERVAL = 5
 shiptruck_dict = dict()
@@ -36,7 +36,6 @@ def ack_back_ups(ups_socket, seqnum):
     my_send(ups_socket, ack_command)
     
 
-    
 def ua_connect(ups_socket):
     response = my_recv(ups_socket)
     command = UA_pb2.UtoACommand()
@@ -48,20 +47,37 @@ def ua_connect(ups_socket):
         return recv_world_id
 
 
-def au_validate(ups_socket, ups_acc):
+def au_validate(ups_socket, ups_acks, ups_acc, sid):
     seqnum = next(gen)
     val_user = UA_pb2.AtoUCommand()
-    val_user.usrVlid.add(seqnum=seqnum, UPSaccount=ups_acc)
-    my_send(ups_socket, val_user)
+    val_user.usrVlid.add(seqNum=seqnum, UPSaccount=ups_acc, shipId=sid)
+    send_ups(ups_socket, val_user, seqnum, ups_acks)
 
-    # while seqnum not in acks:
-    #     time.sleep(RESEND_INTERVAL)
-    #     my_send(ups_socket, val_user)
 
-def ua_validated(user):
-    # ack_back_ups(user.seqNum)
-    # todo: call world to pack
-    print("send validate")
+def ua_validated(db, world_socket, user, ups_acks, world_acks):
+    # Check if result
+    # If True, purchase
+    pkg_id = user.shipId
+    if user.result:
+        pkg_info = q_pkg_id(db, pkg_id)
+        # IF pkg is related to ups account, then turn to validate
+        item_str = pkg_info[4]
+        whnum = find_near_wh(db, pkg_info[2], pkg_info[3])
+        add_wh_info(db, pkg_id, whnum)
+        # update_pkg_whinfo()
+        '''
+        1. Split item_str into purchase list (utils)
+        2. Assign warehouse info
+        3. Send world_buy
+        '''
+        purchase_list = getListfromStr(item_str)
+        update_pkg_status(db, 1, (pkg_id,))
+        world_buy(world_socket, whnum, purchase_list, world_acks)       
+    else:
+        # If False, update status to cancel
+        update_pkg_status(db, 9, (user.shipId,))
+    
+    
 
 
 def au_pickup(db, ups_socket, shipId, ups_acks):
@@ -72,11 +88,11 @@ def au_pickup(db, ups_socket, shipId, ups_acks):
     pkg = q_pkg_id(db, shipId)
     print(pkg)
     pickup.seqNum = seqnum
-    pickup.warehouseId = pkg[6]
+    pickup.warehouseId = pkg[8]
     newship = pickup.shipment.add()
     newship.shipId = shipId
-    if pkg[7] is not None:
-        newship.UPSaccount = pkg[7]
+    if pkg[6] is not None:
+        newship.UPSaccount = pkg[6]
     # parse purchase_list
     buy = getListfromStr(pkg[4])
     for item in buy:

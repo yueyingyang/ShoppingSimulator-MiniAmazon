@@ -61,10 +61,7 @@ def world_pack(db, world_socket, world_acks, whnum, thing, shipid):
     send_world(world_socket, world_command, seqnum, world_acks)
     # updatre status to packing
     update_pkg_status(db, 3, (shipid,))
-    # go_pack.things = thing # how to pass a protobuf obj to a function AND how to pass repeated field
-    # for item in purchase_list:
-    #     product_command = go_pack.things.add(
-    #         id = item[0], description = item[1], count = item[2])
+
     
 
 

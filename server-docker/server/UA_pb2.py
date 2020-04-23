@@ -18,7 +18,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='',
   syntax='proto2',
   serialized_options=None,
-  serialized_pb=b'\n\x08UA.proto\".\n\x0bUtoAConnect\x12\x0e\n\x06seqNum\x18\x01 \x02(\x03\x12\x0f\n\x07worldId\x18\x02 \x02(\x03\";\n\x15UserValidationRequest\x12\x0e\n\x06seqNum\x18\x01 \x02(\x03\x12\x12\n\nUPSaccount\x18\x02 \x02(\t\"8\n\x16UserValidationResponse\x12\x0e\n\x06seqNum\x18\x01 \x02(\x03\x12\x0e\n\x06result\x18\x02 \x02(\x08\"U\n\x11\x41toUPickupRequest\x12\x0e\n\x06seqNum\x18\x01 \x02(\x03\x12\x13\n\x0bwarehouseId\x18\x02 \x02(\x03\x12\x1b\n\x08shipment\x18\x03 \x03(\x0b\x32\t.ShipInfo\"W\n\x0fUtoALoadRequest\x12\x0e\n\x06seqNum\x18\x01 \x02(\x03\x12\x13\n\x0bwarehouseId\x18\x02 \x02(\x03\x12\x0f\n\x07truckId\x18\x03 \x02(\x03\x12\x0e\n\x06shipId\x18\x04 \x03(\x03\"-\n\x07Product\x12\x13\n\x0b\x64\x65scription\x18\x01 \x02(\t\x12\r\n\x05\x63ount\x18\x02 \x02(\x05\"x\n\x08ShipInfo\x12\x0e\n\x06shipId\x18\x01 \x02(\x03\x12\x12\n\nUPSaccount\x18\x02 \x01(\t\x12\x1a\n\x08products\x18\x03 \x03(\x0b\x32\x08.Product\x12\x15\n\rdestination_x\x18\x04 \x02(\x03\x12\x15\n\rdestination_y\x18\x05 \x02(\x03\"H\n\x15\x41toULoadFinishRequest\x12\x0e\n\x06seqNum\x18\x01 \x02(\x03\x12\x0e\n\x06shipId\x18\x02 \x03(\x03\x12\x0f\n\x07truckId\x18\x03 \x02(\x03\"*\n\x08\x44\x65livery\x12\x0e\n\x06seqNum\x18\x01 \x02(\x03\x12\x0e\n\x06shipId\x18\x02 \x02(\x03\"\xc6\x01\n\x0b\x41toUCommand\x12\'\n\x07usrVlid\x18\x01 \x03(\x0b\x32\x16.UserValidationRequest\x12\"\n\x06pikReq\x18\x02 \x03(\x0b\x32\x12.AtoUPickupRequest\x12\'\n\x07loadReq\x18\x03 \x03(\x0b\x32\x16.AtoULoadFinishRequest\x12\x1d\n\x06\x65rrMsg\x18\x04 \x03(\x0b\x32\r.ErrorMessage\x12\x0b\n\x03\x61\x63k\x18\x05 \x03(\x03\x12\x15\n\rdisconnection\x18\x06 \x01(\x08\"\xdc\x01\n\x0bUtoACommand\x12 \n\nconnection\x18\x01 \x03(\x0b\x32\x0c.UtoAConnect\x12(\n\x07usrVlid\x18\x02 \x03(\x0b\x32\x17.UserValidationResponse\x12!\n\x07loadReq\x18\x03 \x03(\x0b\x32\x10.UtoALoadRequest\x12\x1b\n\x08\x64\x65livery\x18\x04 \x03(\x0b\x32\t.Delivery\x12\x1d\n\x06\x65rrMsg\x18\x05 \x03(\x0b\x32\r.ErrorMessage\x12\x0b\n\x03\x61\x63k\x18\x06 \x03(\x03\x12\x15\n\rdisconnection\x18\x07 \x01(\x08\"A\n\x0c\x45rrorMessage\x12\x0b\n\x03\x65rr\x18\x01 \x02(\t\x12\x14\n\x0coriginseqnum\x18\x02 \x02(\x03\x12\x0e\n\x06seqNum\x18\x03 \x02(\x03'
+  serialized_pb=b'\n\x08UA.proto\".\n\x0bUtoAConnect\x12\x0e\n\x06seqNum\x18\x01 \x02(\x03\x12\x0f\n\x07worldId\x18\x02 \x02(\x03\"K\n\x15UserValidationRequest\x12\x0e\n\x06seqNum\x18\x01 \x02(\x03\x12\x12\n\nUPSaccount\x18\x02 \x02(\t\x12\x0e\n\x06shipId\x18\x03 \x02(\x03\"H\n\x16UserValidationResponse\x12\x0e\n\x06seqNum\x18\x01 \x02(\x03\x12\x0e\n\x06result\x18\x02 \x02(\x08\x12\x0e\n\x06shipId\x18\x03 \x02(\x03\"U\n\x11\x41toUPickupRequest\x12\x0e\n\x06seqNum\x18\x01 \x02(\x03\x12\x13\n\x0bwarehouseId\x18\x02 \x02(\x03\x12\x1b\n\x08shipment\x18\x03 \x03(\x0b\x32\t.ShipInfo\"W\n\x0fUtoALoadRequest\x12\x0e\n\x06seqNum\x18\x01 \x02(\x03\x12\x13\n\x0bwarehouseId\x18\x02 \x02(\x03\x12\x0f\n\x07truckId\x18\x03 \x02(\x03\x12\x0e\n\x06shipId\x18\x04 \x03(\x03\"-\n\x07Product\x12\x13\n\x0b\x64\x65scription\x18\x01 \x02(\t\x12\r\n\x05\x63ount\x18\x02 \x02(\x05\"x\n\x08ShipInfo\x12\x0e\n\x06shipId\x18\x01 \x02(\x03\x12\x12\n\nUPSaccount\x18\x02 \x01(\t\x12\x1a\n\x08products\x18\x03 \x03(\x0b\x32\x08.Product\x12\x15\n\rdestination_x\x18\x04 \x02(\x03\x12\x15\n\rdestination_y\x18\x05 \x02(\x03\"H\n\x15\x41toULoadFinishRequest\x12\x0e\n\x06seqNum\x18\x01 \x02(\x03\x12\x0e\n\x06shipId\x18\x02 \x03(\x03\x12\x0f\n\x07truckId\x18\x03 \x02(\x03\"*\n\x08\x44\x65livery\x12\x0e\n\x06seqNum\x18\x01 \x02(\x03\x12\x0e\n\x06shipId\x18\x02 \x02(\x03\"\xc6\x01\n\x0b\x41toUCommand\x12\'\n\x07usrVlid\x18\x01 \x03(\x0b\x32\x16.UserValidationRequest\x12\"\n\x06pikReq\x18\x02 \x03(\x0b\x32\x12.AtoUPickupRequest\x12\'\n\x07loadReq\x18\x03 \x03(\x0b\x32\x16.AtoULoadFinishRequest\x12\x1d\n\x06\x65rrMsg\x18\x04 \x03(\x0b\x32\r.ErrorMessage\x12\x0b\n\x03\x61\x63k\x18\x05 \x03(\x03\x12\x15\n\rdisconnection\x18\x06 \x01(\x08\"\xdc\x01\n\x0bUtoACommand\x12 \n\nconnection\x18\x01 \x03(\x0b\x32\x0c.UtoAConnect\x12(\n\x07usrVlid\x18\x02 \x03(\x0b\x32\x17.UserValidationResponse\x12!\n\x07loadReq\x18\x03 \x03(\x0b\x32\x10.UtoALoadRequest\x12\x1b\n\x08\x64\x65livery\x18\x04 \x03(\x0b\x32\t.Delivery\x12\x1d\n\x06\x65rrMsg\x18\x05 \x03(\x0b\x32\r.ErrorMessage\x12\x0b\n\x03\x61\x63k\x18\x06 \x03(\x03\x12\x15\n\rdisconnection\x18\x07 \x01(\x08\"A\n\x0c\x45rrorMessage\x12\x0b\n\x03\x65rr\x18\x01 \x02(\t\x12\x14\n\x0coriginseqnum\x18\x02 \x02(\x03\x12\x0e\n\x06seqNum\x18\x03 \x02(\x03'
 )
 
 
@@ -83,6 +83,13 @@ _USERVALIDATIONREQUEST = _descriptor.Descriptor(
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='shipId', full_name='UserValidationRequest.shipId', index=2,
+      number=3, type=3, cpp_type=2, label=2,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
   ],
   extensions=[
   ],
@@ -96,7 +103,7 @@ _USERVALIDATIONREQUEST = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=60,
-  serialized_end=119,
+  serialized_end=135,
 )
 
 
@@ -121,6 +128,13 @@ _USERVALIDATIONRESPONSE = _descriptor.Descriptor(
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='shipId', full_name='UserValidationResponse.shipId', index=2,
+      number=3, type=3, cpp_type=2, label=2,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
   ],
   extensions=[
   ],
@@ -133,8 +147,8 @@ _USERVALIDATIONRESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=121,
-  serialized_end=177,
+  serialized_start=137,
+  serialized_end=209,
 )
 
 
@@ -178,8 +192,8 @@ _ATOUPICKUPREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=179,
-  serialized_end=264,
+  serialized_start=211,
+  serialized_end=296,
 )
 
 
@@ -230,8 +244,8 @@ _UTOALOADREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=266,
-  serialized_end=353,
+  serialized_start=298,
+  serialized_end=385,
 )
 
 
@@ -268,8 +282,8 @@ _PRODUCT = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=355,
-  serialized_end=400,
+  serialized_start=387,
+  serialized_end=432,
 )
 
 
@@ -327,8 +341,8 @@ _SHIPINFO = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=402,
-  serialized_end=522,
+  serialized_start=434,
+  serialized_end=554,
 )
 
 
@@ -372,8 +386,8 @@ _ATOULOADFINISHREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=524,
-  serialized_end=596,
+  serialized_start=556,
+  serialized_end=628,
 )
 
 
@@ -410,8 +424,8 @@ _DELIVERY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=598,
-  serialized_end=640,
+  serialized_start=630,
+  serialized_end=672,
 )
 
 
@@ -476,8 +490,8 @@ _ATOUCOMMAND = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=643,
-  serialized_end=841,
+  serialized_start=675,
+  serialized_end=873,
 )
 
 
@@ -549,8 +563,8 @@ _UTOACOMMAND = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=844,
-  serialized_end=1064,
+  serialized_start=876,
+  serialized_end=1096,
 )
 
 
@@ -594,8 +608,8 @@ _ERRORMESSAGE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1066,
-  serialized_end=1131,
+  serialized_start=1098,
+  serialized_end=1163,
 )
 
 _ATOUPICKUPREQUEST.fields_by_name['shipment'].message_type = _SHIPINFO

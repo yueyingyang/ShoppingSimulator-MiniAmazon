@@ -27,6 +27,7 @@ message UserValidationRequest
 {
     required int64 seqNum = 1;
     required string UPSaccount = 2; // keep consistent with UPSaccount in ShipInfo
+    required int64 shipId = 3;
 }
 
 // UPS to Amazon, response of user verification
@@ -34,6 +35,7 @@ message UserValidationResponse
 {
     required int64 seqNum = 1;
     required bool result = 2;
+    required int64 shipId = 3;
 }
 
 // Amazon asks UPS to go to a warehouse, and pick up a package 

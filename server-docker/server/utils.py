@@ -6,17 +6,12 @@ from google.protobuf.internal.encoder import _EncodeVarint
 # recv message
 def my_recv(socket):
     buffer = []
-    try:
-        while True:
-            buf = socket.recv(1)
-            buffer += buf
-            size, pos = _DecodeVarint32(buffer, 0) 
-            if pos != 0:
-                break
-    except Exception as e:
-        print("----------------  Receive Failure ---------------- ")
-        print(e)
-        return
+    while True:
+        buf = socket.recv(1)
+        buffer += buf
+        size, pos = _DecodeVarint32(buffer, 0) 
+        if pos != 0:
+            break
     message = socket.recv(size)
     return message
 

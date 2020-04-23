@@ -55,7 +55,7 @@ if __name__ == "__main__":
         listenWorld.start()
         listenUps = threading.Thread(target=listen_ups, args=(ups_socket, world_socket, db, world_acks, world_seqs, ups_acks, ups_seqs))
         listenUps.start()
-        listenDjango = threading.Thread(target=listen_django, args=(DJANGO_HOST, DJANGO_PORT, world_socket, ups_socket, db, world_acks,))
+        listenDjango = threading.Thread(target=listen_django, args=(DJANGO_HOST, DJANGO_PORT, world_socket, ups_socket, db, world_acks, ups_acks))
         listenDjango.start()
 
         while True:

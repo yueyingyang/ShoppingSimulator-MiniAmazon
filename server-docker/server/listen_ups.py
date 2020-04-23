@@ -26,12 +26,11 @@ def listen_ups(ups_socket, world_socket, db, world_acks, world_seqs, ups_acks, u
             print("-----------------------------------------------\n")
             for user in command.usrVlid:
                 # avoid repeated handle
+                ack_back_ups(ups_socket, user.seqNum)
                 if user.seqNum in ups_seqs:
-                    ack_back_ups(ups_socket, user.seqNum)
                     continue
                 ups_seqs.add(user.seqNum)
-                ack_back_ups(ups_socket, user.seqNum)
-                ua_validated(user)
+                ua_validated(db, world_socket, user, ups_acks, world_acks)
             
             for to_load in command.loadReq:
                 # avoid repeated handle
