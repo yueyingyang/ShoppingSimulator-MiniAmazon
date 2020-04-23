@@ -11,7 +11,7 @@ from google.protobuf.internal.decoder import _DecodeVarint32
 from google.protobuf.internal.encoder import _EncodeVarint
 
 from utils import my_send, my_recv
-from execTable import update_pkg_status
+from exec_db import update_pkg_status
 
 SIMSPEED = 30000 * 3000
 RESEND_INTERVAL = 5
@@ -23,6 +23,11 @@ def infinite_sequence():
         num += 1
 gen = infinite_sequence()
 
+def send_world(world_socket, world_command, seqnum, world_acks):
+    while not seqnum in world_acks:
+        print("----------------- Send to World ---------------")
+        time.sleep(RESEND_INTERVAL)
+        my_send(world_socket, world_command)
 
 # call when user check out from django
 def world_buy(world_socket, whnum, purchase_list, world_acks):
@@ -36,12 +41,8 @@ def world_buy(world_socket, whnum, purchase_list, world_acks):
         product_command = go_buy.things.add(
             id = item['item_id'], description = item['description'], count = item['count'])
     world_command.simspeed = SIMSPEED
-    my_send(world_socket, world_command)
-    while not seqnum in world_acks:
-        time.sleep(RESEND_INTERVAL)
-        print("world_buy: ")
-        print(world_acks)
-        my_send(world_socket, world_command)
+    send_world(world_socket, world_command, seqnum, world_acks)
+    
 
 
 def world_pack(db, world_socket, world_acks, whnum, thing, shipid):
@@ -57,9 +58,7 @@ def world_pack(db, world_socket, world_acks, whnum, thing, shipid):
         go_pack.things.add(id=item.id, description=item.description,count=item.count)
     world_command.simspeed = SIMSPEED
     my_send(world_socket, world_command)
-    while not seqnum in world_acks:
-        time.sleep(RESEND_INTERVAL)
-        my_send(world_socket, world_command)
+    send_world(world_socket, world_command, seqnum, world_acks)
     # updatre status to packing
     update_pkg_status(db, 3, (shipid,))
     # go_pack.things = thing # how to pass a protobuf obj to a function AND how to pass repeated field
@@ -69,7 +68,7 @@ def world_pack(db, world_socket, world_acks, whnum, thing, shipid):
     
 
 
-def world_load(db, socket, whnum, truckid, sid_list, world_acks):
+def world_load(db, world_socket, whnum, truckid, sid_list, world_acks):
     for sid in sid_list:
         world_command = world_amazon_pb2.ACommands()
         seqnum = next(gen)
@@ -80,12 +79,15 @@ def world_load(db, socket, whnum, truckid, sid_list, world_acks):
         go_load.shipid = sid
         go_load.seqnum = seqnum
         my_send(socket, world_command)
-        while seqnum not in world_acks:
-            time.sleep(RESEND_INTERVAL)
-            my_send(socket, world_command)
+        send_world(world_socket, world_command, seqnum, world_acks)
         # update status to loading
         update_pkg_status(db, 5, sid_list)
-  
+
+def world_disconnect(world_socket):
+    world_command = world_amazon_pb2.ACommands()
+    world_command.finished = True
+    my_send(world_socket, world_command)
+    
 # call when user check status from django
 def world_query(world_socket, world_command, shipid):
     seqnum = next(gen)
@@ -97,9 +99,10 @@ def world_query(world_socket, world_command, shipid):
 def ack_back_world(world_socket, seqNum):
     world_command = world_amazon_pb2.ACommands()
     world_command.acks.append(seqNum)
+    print("---------------- ACK back to UPS --------------")
     my_send(world_socket, world_command)
-
-
+    print(world_command)
+    print("-----------------------------------------------")
 
 
 ### 2. AConnect & 3. AConnected - Connect to world

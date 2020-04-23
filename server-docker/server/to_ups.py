@@ -10,8 +10,8 @@ from google.protobuf.internal.encoder import _EncodeVarint
 import UA_pb2
 import world_amazon_pb2 
 from utils import my_recv, my_send, getListfromStr
-from toWorld import world_load
-from execTable import q_pkg_id, update_pkg_status
+from to_world import world_load
+from exec_db import q_pkg_id, update_pkg_status
 
 RESEND_INTERVAL = 5
 shiptruck_dict = dict()
@@ -23,14 +23,18 @@ def infinite_sequence():
         num += 1
 gen = infinite_sequence()
 
-    
+def send_ups(ups_socket, au_command, seqnum, ups_acks):
+    while seqnum not in ups_acks:
+        print("------------------ Send to UPS ----------------")
+        my_send(ups_socket, au_command)
+        time.sleep(RESEND_INTERVAL)
+
 def ack_back_ups(ups_socket, seqnum):
     ack_command = UA_pb2.AtoUCommand()
-    ack_command.ack.append(seqnum)
+    ack_command.ack.append(next(gen))
     print("---------------- ACK back to UPS --------------")
-    print(ack_command)
-    print("-----------------------------------------------")
     my_send(ups_socket, ack_command)
+    
 
     
 def ua_connect(ups_socket):
@@ -55,7 +59,7 @@ def au_validate(ups_socket, ups_acc):
     #     my_send(ups_socket, val_user)
 
 def ua_validated(user):
-    # ack_back_ups(user.seqnum)
+    # ack_back_ups(user.seqNum)
     # todo: call world to pack
     print("send validate")
 
@@ -80,10 +84,7 @@ def au_pickup(db, ups_socket, shipId, ups_acks):
     newship.destination_x = pkg[2]
     newship.destination_y = pkg[3]
     # send to ups
-    my_send(ups_socket, au_command)
-    while seqnum not in ups_acks:
-        time.sleep(RESEND_INTERVAL)
-        my_send(ups_socket, au_command)
+    send_ups(ups_socket, au_command, seqnum, ups_acks)
 
 
 def au_deliver(db, ups_socket, loaded, ups_acks):
@@ -92,11 +93,8 @@ def au_deliver(db, ups_socket, loaded, ups_acks):
     for sid in ship_list:
         deliver = UA_pb2.AtoUCommand()
         seqnum = next(gen)
-        deliver.loadReq.add(seqNum=seqnum, shipId=sid, truckId=q_pkg_id(db, sid)[1])
-        my_send(ups_socket, deliver)    
-        while seqnum not in ups_acks:
-            time.sleep(RESEND_INTERVAL)
-            my_send(ups_socket, deliver)
+        deliver.loadReq.add(seqNum=seqnum, shipId=sid, truckId=q_pkg_id(db, sid)[1])   
+        send_ups(ups_socket, deliver, seqnum, ups_acks)
     # update status to delivering 
     update_pkg_status(db, 7, (loaded.shipid,))
         

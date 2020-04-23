@@ -4,16 +4,16 @@ import threading
 import socket
 from random import random, randint
 from init import connect_db, init_ups_socket
-from execTable import init_wh
-from toWorld import connect_world, connect_world_id
-from toUps import ua_connect, au_validate
-from listenWorld import listen_world
-from listenUps import listen_ups
-from listenDjango import listen_django
+from exec_db import init_wh
+from to_world import connect_world, connect_world_id
+from to_ups import ua_connect, au_validate
+from listen_world import listen_world
+from listen_ups import listen_ups
+from listen_django import listen_django
 
-UPS_HOST, UPS_PORT = "vcm-13659.vm.duke.edu", 5555
+UPS_HOST, UPS_PORT = socket.gethostname(), 5555
 WORLD_HOST, WORLD_PORT = "vcm-13659.vm.duke.edu", 23456
-DJANGO_HOST, DJANGO_PORT = "vcm-13659.vm.duke.edu", 23333
+DJANGO_HOST, DJANGO_PORT = socket.gethostname(), 23333
 
 
 NUM_WH = 3

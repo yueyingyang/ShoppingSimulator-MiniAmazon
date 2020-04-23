@@ -2,9 +2,9 @@ import UA_pb2
 import world_amazon_pb2 
 import threading
 from utils import my_recv, my_send, parse_list_to_str
-from toWorld import recv_world, ack_back_world, world_pack
-from toUps import au_pickup, au_deliver
-from execTable import q_pkg_by_item, update_pkg_status
+from to_world import recv_world, ack_back_world, world_pack
+from to_ups import au_pickup, au_deliver
+from exec_db import q_pkg_by_item, update_pkg_status
 
 
 buyseq_shipid = dict()
@@ -15,9 +15,11 @@ def listen_world(socket, ups_socket, db, world_acks, world_seqs, ups_acks, ups_s
 
     print("========== Start to listen the world ==========\n")
     while True:
-        # world_command_updated = True
-        response = recv_world(socket)
-        world_command = world_amazon_pb2.ACommands()
+        try:
+            response = recv_world(socket)
+        except Exception as e:
+            print("-------------- World Recv Failure ------------\n")
+            break
         if response is not None: 
             print("---------------- Message from world ----------")
             print(response)

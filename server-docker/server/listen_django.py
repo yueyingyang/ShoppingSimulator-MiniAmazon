@@ -1,7 +1,7 @@
 import socket
-from toWorld import world_buy
+from to_world import world_buy
 from utils import getListfromStr
-from execTable import q_pkg_id, add_wh_info, find_near_wh, update_pkg_status
+from exec_db import q_pkg_id, add_wh_info, find_near_wh, update_pkg_status
 
 
 def listen_django(D_HOST, D_PORT, world_socket, ups_socket, db, world_acks):

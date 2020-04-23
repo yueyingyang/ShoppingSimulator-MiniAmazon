@@ -25,7 +25,7 @@ SECRET_KEY = '^qbqw=7=du_*ywk4t1n#3z4=u3ma99njn@-2q4p6c1)rnmly(j'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['local host', 'vcm-12347.vm.duke.edu']
+ALLOWED_HOSTS = ['web']
 
 
 # Application definition
@@ -125,3 +125,4 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
 STATIC_URL = '/static/'
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
