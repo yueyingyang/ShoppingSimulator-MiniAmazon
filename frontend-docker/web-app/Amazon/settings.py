@@ -25,7 +25,7 @@ SECRET_KEY = '^qbqw=7=du_*ywk4t1n#3z4=u3ma99njn@-2q4p6c1)rnmly(j'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['web']
+ALLOWED_HOSTS = ['local host', 'vcm-12347.vm.duke.edu', 'vcm-13659.vm.duke.edu']
 
 
 # Application definition
@@ -37,7 +37,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'frontEndServer.apps.FrontendserverConfig'
+    'frontEndServer.apps.FrontendserverConfig',
+    'crispy_forms',
 ]
 
 MIDDLEWARE = [
@@ -125,4 +126,11 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
 STATIC_URL = '/static/'
+
+AUTH_USER_MODEL = 'frontEndServer.my_user'
+
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
+
+LOGIN_URL = 'login'
+LOGIN_REDIRECT_URL = 'home'
+LOGOUT_REDIRECT_URL = 'login'

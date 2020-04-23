@@ -13,7 +13,7 @@ from utils import my_recv, my_send, getListfromStr
 from to_world import world_load, world_buy
 from exec_db import q_pkg_id, update_pkg_status, find_near_wh, add_wh_info
 
-RESEND_INTERVAL = 5
+RESEND_INTERVAL = 10
 shiptruck_dict = dict()
 
 def infinite_sequence():

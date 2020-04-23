@@ -14,7 +14,7 @@ from utils import my_send, my_recv
 from exec_db import update_pkg_status
 
 SIMSPEED = 30000 * 3000
-RESEND_INTERVAL = 5
+RESEND_INTERVAL = 10
 
 def infinite_sequence():
     num = 100

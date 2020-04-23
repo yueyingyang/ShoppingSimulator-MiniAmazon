@@ -1,8 +1,22 @@
 from django.db import models
+from django.conf import settings
+from django.contrib.auth import get_user_model
+from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.decorators import login_required
 
 class Warehouse(models.Model):
     x = models.IntegerField(default=1)
     y = models.IntegerField(default=1)
+
+class my_user(AbstractUser):
+    email = models.EmailField(unique=True, max_length=255)
+    username = models.CharField(max_length=150)
+    is_active = models.BooleanField(default=True)
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ['username']
+
+    def __str__(self):
+        return self.email
 
 class Package(models.Model):
     # Auto-generated package_id
@@ -40,10 +54,14 @@ class Package(models.Model):
     ]
     status = models.IntegerField(default=CREATED, choices=PKG_STATUS)
     upsAccount = models.TextField(default=None, blank=True, null=True)
+    user = models.ForeignKey(my_user, default=None, related_name="user", on_delete=models.DO_NOTHING)
 
 
 # Front end catalog
 class Product(models.Model):
     description = models.CharField(max_length=100)
 
-# Create your models here.
+
+
+
+

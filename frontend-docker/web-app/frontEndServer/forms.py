@@ -1,11 +1,15 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
-from .models import Package, Product, Warehouse
+from .models import Package, Product, Warehouse, my_user
 from django.views.generic.edit import FormView
 from django.utils import timezone
 import datetime
 
-class queryStatus(forms.Form):
-    upsAccount = forms.CharField(max_length=150, label="upsAccount")
-    pkgid = forms.CharField(max_length=150, label="Package ID")
 
+class UserRegisterForm(UserCreationForm):
+    class Meta(UserCreationForm.Meta):
+        model = my_user
+        fields = [
+            'email',
+            'username',
+        ]

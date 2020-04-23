@@ -1,13 +1,29 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Product, Package, Warehouse
-from .forms import queryStatus
+from .forms import UserRegisterForm
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 import socket
 
-AMAZON_HOST, AMAZON_PORT = "vcm-12347.vm.duke.edu", 23333
+AMAZON_HOST, AMAZON_PORT = "vcm-13659.vm.duke.edu", 23333
 
+def UserRegister(request):
+    if request.method == 'POST':
+        form = UserRegisterForm(request.POST)
+        if form.is_valid():
+            new_user = form.save()
+            login(request, new_user)
+            return redirect("home")
+    else:
+        form = UserRegisterForm()
+    return render(request, 'frontEndServer/user_register.html', {'form': form})
+
+@login_required
 def home(request):
-    return render(request, 'frontEndServer/home.html', {})
+    return render(request, 'frontEndServer/home.html',{})
 
+
+@login_required
 def buy(request):
     model = Product
     products = Product.objects.all()
@@ -32,7 +48,7 @@ def buy(request):
                 buy_str = ";".join(buy_list)
                 print("buy_str: " + buy_str)
                 # add to db
-                pkg = Package.objects.create(item_str = buy_str)
+                pkg = Package.objects.create(item_str = buy_str, user=request.user)
                 pkg.save()
                 print(pkg.id)
                 showid = pkg.id
@@ -49,7 +65,6 @@ def buy(request):
     context = {'products': products, 'showid':showid}
     return render(request, 'frontEndServer/display.html', context)
 
-# Create your views here.
 
 def connect_amazon():
     amazon_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -61,20 +76,27 @@ def connect_amazon():
     except:
         print('Failed to connect to Amazon backend')
 
-
+@login_required
 def query_status(request):
-    form = queryStatus()
+    #form = queryStatus()
+    info1 = None
+    info2 = None
+    msg_pkg = None
+    msg_ups = None
     if request.method == 'POST':
-        # if use pkg id to query
-        if 'ups' in request.POST:
-            # filter in db
-            return redirect('query')
-        # if use ups account to query
-        elif 'pkg' in request.POST:
-            # filter in db
-            return redirect('query')
-        else:
-            return redirect('query')  
-    context = {}
+        #if use pkg id to query
+        if 'button1' in request.POST:
+            if 'pkg' in request.POST and request.POST['pkg'] != '':  
+                if Package.objects.filter(id = request.POST['pkg']).exists():
+                    info1 = Package.objects.get(id = request.POST['pkg'])
+                else:
+                    msg_pkg = 'Sorry. Not Found.'
+        if 'button2' in request.POST:
+            if 'ups' in request.POST and request.POST['ups'] != '':  
+                if Package.objects.filter(upsAccount = request.POST['ups']).exists():
+                    info2 = Package.objects.get(upsAccount = request.POST['ups'])
+                else:
+                    msg_ups = 'Sorry. Not Found.'
+    context = {'info1': info1, 'msg_pkg' : msg_pkg,'info2': info2, 'msg_ups' : msg_ups}
     return render(request, 'frontEndServer/query.html', context)
 

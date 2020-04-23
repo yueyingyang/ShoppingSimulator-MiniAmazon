@@ -6,12 +6,25 @@
 <form method="POST">
     {% csrf_token %}
     <div> 
-    <input type="text" id="ups" name="ups" value="ups">
+    <input type="text" id="pkg" name="pkg">
+    <button class="btn btn-outline-info" type="submit" name="button1" value="button1">Query by ID</button>
+    {% if info1 is not None %}
+        <p>Your package status is: {{info1.get_status_display}}</p>
+    {% endif %}
+    {% if msg_pkg is not None %}
+        <p>{{msg_pkg}}</p>
+    {% endif %}
     </div>
-    
+
     <div> 
-    <input type="text" id="pkg" name="pkg" value="pkg">
-    <button class="btn btn-outline-info" type="submit" name="checkout" value="checkout">Query</button>
+    <input type="text" id="ups" name="ups">
+    <button class="btn btn-outline-info" type="submit" name="button2" value="button2">Query by UPS</button>
+    {% if info2 is not None %}
+        <p>Your package status is: {{info2.get_status_display}}</p>
+    {% endif %}
+    {% if msg_ups is not None %}
+        <p>{{msg_ups}}</p>
+    {% endif %}
     </div>
 
 </form>
