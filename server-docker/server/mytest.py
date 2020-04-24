@@ -35,11 +35,17 @@ if __name__ == "__main__":
 
 
 
+
+
+
+
+
+
+
     sender = 'yueyingyang22@gmail.com'
     receiver = 'sif1900@outlook.com'
     content = """From Amazon.
                 Best regards"""
-
     msg = MIMEText(content)
     msg['From'] = sender
     msg['To'] = receiver

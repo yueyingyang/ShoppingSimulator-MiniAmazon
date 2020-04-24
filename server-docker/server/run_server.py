@@ -3,7 +3,7 @@ import world_amazon_pb2
 import threading
 import socket
 from random import random, randint
-from init import connect_db, init_ups_socket
+from init import connect_db, init_ups_socket, setup_email
 from exec_db import init_wh
 from to_world import connect_world, connect_world_id
 from to_ups import ua_connect, au_validate
@@ -43,6 +43,11 @@ if __name__ == "__main__":
     world_socket = connect_world(WORLD_HOST, WORLD_PORT)
     wh_info = init_wh(db, NUM_WH)
     connect_world_id(world_socket, world_id, wh_info)
+
+    # Setup email
+    global email_socket
+    global email_sender
+    email_socket, email_sender = setup_email()
 
     # Start listen
     with ups_socket, world_socket, db:

@@ -25,3 +25,11 @@ def connect_db():
     )
     print("================ Connected to DB ==============\n")
     return db
+
+def setup_email():
+    context=ssl.create_default_context()
+    sender = 'yueyingyang22@gmail.com'
+    s = smtplib.SMTP('smtp.gmail.com', 587)
+    s.starttls(context=context)
+    s.login(sender, '12345678xiaomila')
+    return s, sender   

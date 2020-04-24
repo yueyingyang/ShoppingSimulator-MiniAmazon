@@ -70,3 +70,12 @@ def getListfromStr(item_str):
         'count':4
     }]
     '''
+
+def send_email(receiver, id, status):
+    content = """Thank you for choosing Yi & Yueying \'s Amazon.
+                Best regards"""
+    msg = MIMEText(content)
+    msg['From'] = email_sender
+    msg['To'] = receiver
+    msg['Subject'] = 'Your pakage #' + id + 'is ' + status
+    email_socket.sendmail(email_sender, receiver, msg.as_string())

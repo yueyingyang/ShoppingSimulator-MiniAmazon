@@ -1,7 +1,7 @@
 import socket
 from to_world import world_buy
 from to_ups import au_validate
-from utils import getListfromStr
+from utils import getListfromStr, send_email
 from exec_db import q_pkg_id, add_wh_info, find_near_wh, update_pkg_status
 
 
@@ -50,6 +50,9 @@ def listen_django(D_HOST, D_PORT, world_socket, ups_socket, db, world_acks, ups_
         print(d1)
         print("-----------------------------------------------")
         pkg_id = int(d1)
+        receiver = q_email_by_sid(db, pkg_id)
+        pkg_status = 'CREATED.'
+        send_email(receiver, pkg_id, pkg_status)
         pkg_info = q_pkg_id(db, pkg_id)
         # IF pkg is related to ups account, then turn to validate
         if pkg_info[6] is not None:

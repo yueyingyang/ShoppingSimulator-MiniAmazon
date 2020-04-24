@@ -5,7 +5,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 import socket
 
-AMAZON_HOST, AMAZON_PORT = "vcm-13659.vm.duke.edu", 23333
+AMAZON_HOST, AMAZON_PORT = "vcm-12347.vm.duke.edu", 23333
 
 def UserRegister(request):
     if request.method == 'POST':
@@ -26,7 +26,7 @@ def home(request):
 @login_required
 def buy(request):
     model = Product
-    products = Product.objects.all()
+    products = Product.objects.all().order_by('id')
     showid = None
     if request.method == 'POST':
         if 'checkout' in request.POST:
@@ -60,8 +60,8 @@ def buy(request):
                     # to be more robust
                     print("finish sending")
                 # return redirect('home')
-            else:
-                return redirect('buy')   
+                if 'ups' in request.POST and request.POST['ups'] != '':
+                    Package.objects.filter(id = showid).update(upsAccount = request.POST['ups'])  
     context = {'products': products, 'showid':showid}
     return render(request, 'frontEndServer/display.html', context)
 

@@ -9,9 +9,9 @@ from google.protobuf.internal.encoder import _EncodeVarint
 # Import other 
 import UA_pb2
 import world_amazon_pb2 
-from utils import my_recv, my_send, getListfromStr
+from utils import my_recv, my_send, getListfromStr, send_email
 from to_world import world_load, world_buy
-from exec_db import q_pkg_id, update_pkg_status, find_near_wh, add_wh_info
+from exec_db import q_pkg_id, update_pkg_status, find_near_wh, add_wh_info, q_email_by_sid
 
 RESEND_INTERVAL = 10
 
@@ -75,6 +75,9 @@ def ua_validated(db, world_socket, user, ups_acks, world_acks):
     else:
         # If False, update status to cancel
         update_pkg_status(db, 9, (user.shipId,))
+        receiver = q_email_by_sid(db, pkg_id)
+        pkg_status = 'CANCELLED since validation failed.'
+        send_email(receiver, pkg_id, pkg_status)
     
     
 

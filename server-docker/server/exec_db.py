@@ -80,6 +80,15 @@ def q_prime_by_sid(db, sid):
     cursor = db.cursor()
     cursor.execute('SELECT * FROM "frontEndServer_my_user" WHERE id = %s', (user,))
     result = cursor.fetchall()
-    # X is the index of prime
+    print("**********************PRIME INFO***********************")
     print(result[0][11])
     return result[0][11]  
+
+def q_email_by_sid(db, sid):
+    user = q_pkg_id(db, sid)[7]
+    cursor = db.cursor()
+    cursor.execute('SELECT * FROM "frontEndServer_my_user" WHERE id = %s', (user,))
+    result = cursor.fetchall()  
+    print("**********************EMAIL INFO***********************")
+    print(result[0][])
+    return result[0][]     
