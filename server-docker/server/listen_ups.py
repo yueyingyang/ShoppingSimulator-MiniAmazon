@@ -1,15 +1,15 @@
 import UA_pb2
 import threading
-from utils import my_recv
+from utils import my_recv, send_email
 from to_ups import ua_validated, ack_back_ups
 from to_world import world_load, world_disconnect
-from exec_db import update_truck_id, update_pkg_status
+from exec_db import update_truck_id, update_pkg_status, q_email_by_sid
 
 # Global
 ups_acks = set()
 ups_seq = set()
 
-def listen_ups(ups_socket, world_socket, db, world_acks, world_seqs, ups_acks, ups_seqs):
+def listen_ups(ups_socket, world_socket, db, world_acks, world_seqs, ups_acks, ups_seqs, email_socket, email_sender):
     print("=============== Start to listen UPS ===========\n")
     while True:
         try:
@@ -33,7 +33,7 @@ def listen_ups(ups_socket, world_socket, db, world_acks, world_seqs, ups_acks, u
                 if user.seqNum in ups_seqs:
                     continue
                 ups_seqs.add(user.seqNum)
-                ua_validated(db, world_socket, user, ups_acks, world_acks)
+                ua_validated(db, world_socket, user, ups_acks, world_acks, email_socket, email_sender)
             
             for to_load in command.loadReq:
                 # avoid repeated handle
@@ -54,6 +54,9 @@ def listen_ups(ups_socket, world_socket, db, world_acks, world_seqs, ups_acks, u
                     continue
                 ups_seqs.add(delivered.seqNum)
                 update_pkg_status(db, 8, delivered.shipId)
+                receiver = q_email_by_sid(db, delivered.shipId)
+                pkg_status = 'DELIVERED.'
+                send_email(receiver, delivered.shipId, pkg_status, email_socket, email_sender)
 
 
             if command.disconnection:

@@ -1,5 +1,5 @@
 import world_amazon_pb2 
-
+from email.mime.text import MIMEText
 from google.protobuf.internal.decoder import _DecodeVarint32
 from google.protobuf.internal.encoder import _EncodeVarint
 
@@ -71,11 +71,13 @@ def getListfromStr(item_str):
     }]
     '''
 
-def send_email(receiver, id, status):
+def send_email(receiver, id, status, socket, sender):
+    email_socket = socket
+    email_sender = sender
     content = """Thank you for choosing Yi & Yueying \'s Amazon.
                 Best regards"""
     msg = MIMEText(content)
     msg['From'] = email_sender
     msg['To'] = receiver
-    msg['Subject'] = 'Your pakage #' + id + 'is ' + status
+    msg['Subject'] = 'Your pakage #' + str(id) + ' is ' + status
     email_socket.sendmail(email_sender, receiver, msg.as_string())

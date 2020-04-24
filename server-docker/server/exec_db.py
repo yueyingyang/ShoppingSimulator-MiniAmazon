@@ -90,5 +90,5 @@ def q_email_by_sid(db, sid):
     cursor.execute('SELECT * FROM "frontEndServer_my_user" WHERE id = %s', (user,))
     result = cursor.fetchall()  
     print("**********************EMAIL INFO***********************")
-    print(result[0][])
-    return result[0][]     
+    print(result[0][8])
+    return result[0][8]     

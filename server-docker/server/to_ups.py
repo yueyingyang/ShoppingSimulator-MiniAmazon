@@ -53,7 +53,7 @@ def au_validate(ups_socket, ups_acks, ups_acc, sid):
     send_ups(ups_socket, val_user, seqnum, ups_acks)
 
 
-def ua_validated(db, world_socket, user, ups_acks, world_acks):
+def ua_validated(db, world_socket, user, ups_acks, world_acks, email_socket, email_sender):
     # Check if result
     # If True, purchase
     pkg_id = user.shipId
@@ -77,7 +77,7 @@ def ua_validated(db, world_socket, user, ups_acks, world_acks):
         update_pkg_status(db, 9, (user.shipId,))
         receiver = q_email_by_sid(db, pkg_id)
         pkg_status = 'CANCELLED since validation failed.'
-        send_email(receiver, pkg_id, pkg_status)
+        send_email(receiver, pkg_id, pkg_status, email_socket, email_sender)
     
     
 

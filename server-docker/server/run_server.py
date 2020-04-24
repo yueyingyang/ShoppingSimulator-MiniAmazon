@@ -12,9 +12,8 @@ from listen_ups import listen_ups
 from listen_django import listen_django
 
 UPS_HOST, UPS_PORT = socket.gethostname(), 5555
-WORLD_HOST, WORLD_PORT = "vcm-13659.vm.duke.edu", 23456
+WORLD_HOST, WORLD_PORT = "vcm-12347.vm.duke.edu", 23456
 DJANGO_HOST, DJANGO_PORT = socket.gethostname(), 23333
-
 
 NUM_WH = 3
 
@@ -58,9 +57,9 @@ if __name__ == "__main__":
         # Listen 2 socket.
         listenWorld = threading.Thread(target=listen_world, args=(world_socket, ups_socket, db, world_acks, world_seqs, ups_acks, ups_seqs))
         listenWorld.start()
-        listenUps = threading.Thread(target=listen_ups, args=(ups_socket, world_socket, db, world_acks, world_seqs, ups_acks, ups_seqs))
+        listenUps = threading.Thread(target=listen_ups, args=(ups_socket, world_socket, db, world_acks, world_seqs, ups_acks, ups_seqs, email_socket, email_sender))
         listenUps.start()
-        listenDjango = threading.Thread(target=listen_django, args=(DJANGO_HOST, DJANGO_PORT, world_socket, ups_socket, db, world_acks, ups_acks))
+        listenDjango = threading.Thread(target=listen_django, args=(DJANGO_HOST, DJANGO_PORT, world_socket, ups_socket, db, world_acks, ups_acks, email_socket, email_sender))
         listenDjango.start()
 
         while True:
