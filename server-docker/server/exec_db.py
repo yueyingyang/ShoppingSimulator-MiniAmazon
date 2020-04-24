@@ -72,10 +72,10 @@ def insert_wh(db, x, y):
 
 
 def q_prime_by_sid(db, sid):
-    user = q_pkg_id(db, sid)
+    user = q_pkg_id(db, sid)[7]
     cursor = db.cursor()
     cursor.execute('SELECT * FROM "frontEndServer_my_user" WHERE id = %s', (user,))
     result = cursor.fetchall()
     # X is the index of prime
-    print(result[0][X])
-    return result[0][X]  
+    print(result[0][11])
+    return result[0][11]  
