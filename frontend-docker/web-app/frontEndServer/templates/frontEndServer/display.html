@@ -1,17 +1,17 @@
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-{% load static %}
+{% extends "./home.html" %}
+{% block content %}
+{% load crispy_forms_tags %}
 
 <p>All Pruducts</p>
-<form method="POST">
+<form method="POST" class="form">
     {% csrf_token %}
     {% if products.exists %}
-        {% for item in products %}
-            {{item.description}}
-            <input type="checkbox" id = "mycheck" name="choose" value="{{ item.id }}" >
-            <input type="number" id="count" name="count" min=1 value = 1>        
-
-        {% endfor %}
-    {% endif %} 
+    {% for item in products %}
+    <label class="form-check-label font-weight-bold" for="mycheck">{{item.description}}</label>
+    <input type="checkbox" id="mycheck" name="choose" value="{{ item.id }}">
+    <input type="number" id="count" name="count" min=1 value=1>
+    {% endfor %}
+    {% endif %}
     <br>
     <p>You can input your UPS Accout here</p>
     <input type="text" id="ups" name="ups">
@@ -25,9 +25,7 @@
     <br>
     <br>
     {% if showid is not None %}
-        <p>Your package id (tracking number) is: {{showid}}</p>
+    <p>Your package id (tracking number) is: {{showid}}</p>
     {% endif %}
-
-    <a href="{% url 'home' %}" class="btn btn-outline-secondary btn-sm">Home</a>
 </form>
-
+{% endblock content %}

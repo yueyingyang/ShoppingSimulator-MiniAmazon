@@ -20,10 +20,10 @@ def init_ups_socket(UPS_HOST, UPS_PORT):
 
 def connect_db():
     db = psycopg2.connect(
-        database="hyldknqo",
-        user="hyldknqo",
-        password="GjSNFxYnzBlt76C67wXgteDYWh3e7IpL",
-        host="rajje.db.elephantsql.com",
+        database="amazon",
+        user="postgres",
+        password="abc123",
+        host="127.0.0.1",
         port="5432",
     )
     print("================ Connected to DB ==============\n")
