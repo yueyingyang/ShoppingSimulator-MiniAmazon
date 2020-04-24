@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Product, Package, Warehouse
+from .models import Product, Package, Warehouse, my_user
 from .forms import UserRegisterForm
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -116,13 +116,21 @@ def query_status(request):
     context = {'info1': info1, 'msg_pkg' : msg_pkg,'info2': info2, 'msg_ups' : msg_ups}
     return render(request, 'frontEndServer/query.html', context)
 
-# @login_required
-# def PrimeRegiseterView(request):
-#     # if not prime member, go to prime_register page
-#     user = request.user
-#     prime = my_user.objects.get(id = request.user).prime
-#     if not prime:
-#         if request.method == 'POST':
+@login_required
+def PrimeRegiseterView(request):
+    # if not prime member, go to prime_register page
+    user = request.user
+    prime = my_user.objects.get(email = user).prime
+    msg = None
+    if not prime:
+        if request.method == 'POST':
+            if 'prime' in request.POST:
+                my_user.objects.filter(email = user).update(prime = True)
+                msg = 'Cong! You have been successfully registered!'
+    else:
+        msg = 'You are a Prime member now.'
+    context = {'msg': msg}
+    return render(request, 'frontEndServer/prime_register.html', context)
             
 #     # else go to prime_detail page
 

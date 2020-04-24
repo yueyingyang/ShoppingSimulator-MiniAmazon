@@ -11,6 +11,7 @@ urlpatterns = [
     path('buy/', views.buy, name='buy'),
     path('query/', views.query_status, name='query'),
     path('login/', auth_views.LoginView.as_view(template_name='frontEndServer/login.html'), name='login'),
+    path('prime_register/', views.PrimeRegiseterView, name='prime_register'),
 
     # # ex: /polls/5/
     # path('<int:question_id>/', views.detail, name='detail'),

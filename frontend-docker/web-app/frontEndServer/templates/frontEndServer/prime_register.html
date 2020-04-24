@@ -1,0 +1,14 @@
+{% load crispy_forms_tags %}
+
+        <h5 class="card-title">Welcome to register as a member!</h5>
+        <form method="POST">
+        {% csrf_token %}
+        
+        {% if msg is None%}
+            <button class="btn btn-outline-info" type="submit" name="prime" value="prime">Register</button>
+        {% else %}
+            <p>{{msg}}</p>
+            <a href="{% url 'home' %}" class="btn btn-outline-secondary btn-sm">Home</a>
+        {% endif %}
+        </form>
+

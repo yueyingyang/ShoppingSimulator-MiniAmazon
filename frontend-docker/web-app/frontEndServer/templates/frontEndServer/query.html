@@ -17,9 +17,8 @@
         {% else %}
             <p>Sorry you cannot cancel.</p>
         {% endif %}
-        
-        
     {% endif %}
+
     {% if msg_pkg is not None %}
         <p>{{msg_pkg}}</p>
     {% endif %}
@@ -40,4 +39,5 @@
     {% endif %}
     </div>
 
+    <a href="{% url 'home' %}" class="btn btn-outline-secondary btn-sm">Home</a>
 </form>
