@@ -12,7 +12,7 @@ from listen_ups import listen_ups
 from listen_django import listen_django
 
 UPS_HOST, UPS_PORT = socket.gethostname(), 5555
-WORLD_HOST, WORLD_PORT = "vcm-12347.vm.duke.edu", 23456
+WORLD_HOST, WORLD_PORT = "vcm-13659.vm.duke.edu", 23456
 DJANGO_HOST, DJANGO_PORT = socket.gethostname(), 23333
 
 NUM_WH = 3

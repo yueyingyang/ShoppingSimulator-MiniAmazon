@@ -1,45 +1,131 @@
 {% extends "./home.html" %}
 {% block content %}
 {% load crispy_forms_tags %}
-<p>Query your package Status</p>
-<form method="POST">
+
+<form method="POST" class="form-inline mt-3">
     {% csrf_token %}
     <div>
-        <input type="text" id="pkg" name="pkg">
-        <button class="btn btn-outline-info" type="submit" name="button1" value="button1">Query by ID</button>
-        {% if info1 is not None %}
-        <p>Your package status is: {{info1.id}}, {{info1.get_status_display}}</p>
-        <p>Your package status number is: {{info1.status}}</p>
-        {% if info1.status <= 4 %}
-        <p>Do you want to cancel your order?</p>
-        <button class="btn btn-outline-info" type="submit" name="return1" value="return1">Cancel order</button>
-        {% else %}
-        <p>Sorry you cannot cancel.</p>
-        {% endif %}
-        {% endif %}
+    <h3>Query your package Status</h3>
+    <br>
+    <div>
+        <div>
+            {% comment %} Query box and button {% endcomment %}
+            <div class="form-group mx-sm-3 mb-2">
+                {% comment %} Query by ID {% endcomment %}
+                <input type="text" id="pkg" name="pkg" class="form-control">
+                <button class="btn btn-outline-info ml-2" type="submit" name="button1" value="button1"
+                    placeholder="PackageId / ShipmentId">Query by ID</button> 
+            </div>
 
-        {% if msg_pkg is not None %}
-        <p>{{msg_pkg}}</p>
-        {% endif %}
+            {% comment %} if found {% endcomment %}
+            {% if info1 is not None %}
+                <div class="alert alert-secondary mt-2" role="alert">
+                    <p>Your package status is: #{{info1.id}}, {{info1.get_status_display}} (status number: {{info1.status}})</p>
+                    {% if info1.status <= 4 %}
+                    <p>Do you want to cancel your package?</p>
+                    <button class="btn btn-light" type="submit" name="return1" value="return1">Cancel package</button>
+                    {% else %}
+                    <p>Sorry you cannot cancel this package.</p>
+                    {% endif %}
+                </div>
+            {% endif %}
+
+            {% comment %} msg {% endcomment %}
+            {% if msg_pkg is not None %}
+                <div class="alert alert-secondary mt-2" role="alert">
+                    <p>{{msg_pkg}}</p>
+                </div>
+            {% endif %}
+        </div>
+
+        <div>
+            {% comment %} Query box and button {% endcomment %}
+            <div class="form-group mx-sm-3 mb-2">
+                {% comment %} Query by ID {% endcomment %}
+                <input type="text" id="ups" name="ups" class="form-control">
+                <button class="btn btn-outline-info ml-2" type="submit" name="button2" value="button2"
+                    placeholder="UPS account name">Query by UPS</button>
+            </div>
+
+            {% comment %} if found {% endcomment %}
+            {% if info2 is not None %}
+                <div class="alert alert-secondary" role="alert">
+                    <h5>All your packages related to this UPS account are as followed</h5>
+                    <br>
+                    {% comment %} if have, show {% endcomment %}
+                    {% for item in info2 %}
+                    <p>Your package status is: #{{item.id}}, {{item.get_status_display}} (status number: {{item.status}})</p>
+                    {% comment %} if can cancel, show button {% endcomment %}
+                    <div>
+                        {% if item.status <= 4 %}
+                        <p>Do you want to cancel your package?&nbsp;&nbsp;
+                        {% comment %} checkbox and submit button {% endcomment %}
+                        <input type="checkbox" id="ups_cancel_check" name="ups_cancel_check" value="{{ item.id }}">Yes</input>
+                        </p>
+                        {% else %}
+                        <p>Sorry you cannot cancel this package.</p>
+                        {% endif %}
+                    </div>  
+                    <br>
+                    {% endfor %}
+                    <button class="btn btn-light" type="submit" name="return2" value="return2">Cancel selected packages</button>
+                </div>
+            {% endif %}
+
+            {% comment %} msg {% endcomment %}
+            {% if msg_ups is not None %}
+                <div class="alert alert-secondary mt-2" role="alert">
+                    <p>{{msg_ups}}</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
     </div>
 
     <div>
-        <input type="text" id="ups" name="ups">
-        <button class="btn btn-outline-info" type="submit" name="button2" value="button2">Query by UPS</button>
-        {% if info2 is not None %}
-        {% for item in info2 %}
-        <p>Your package status is: {{item.id}},{{item.get_status_display}}</p>
-        {% endfor %}
-        {% if info2.status <= 4 %}
-        <p>Do you want to cancel your order?</p>
-        <button class="btn btn-outline-info" type="submit" name="return2" value="return2">Cancel order</button>
+    <h3>All your orders</h3>
+    <br>
+    <div>
+    {% comment %} <div>
+        <div class="alert alert-secondary" role="alert">
+            {% if info3 is not None %}
+                {% for item in info3 %}
+                    <p>#{{item.id}} : {{item.get_status_display}}</p> 
+                {% endfor %}
+            {%else%}
+                <p>No packages</p>
+                <br>
+            {% endif %}
+        </div>
+    </div> {% endcomment %}
+    <table class="table table-striped">
+    <thead>
+        <tr>
+        <th scope="col">#</th>
+        <th scope="col">Package Id</th>
+        <th scope="col">Status</th>
+        <th scope="col">UPS</th>
+        <th scope="col">Products</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% if info3 is not None %}
+            {% for item in info3 %}
+            <tr>
+            <th scope="row">{{ forloop.counter}}</th>
+            <td>{{ item.id }}</td>
+            <td>{{ item.get_status_display  }}</td>
+            <td>{{ item.upsAccount}}</td>
+            <td>{{item.item_str}}</td>
+            </tr>
+            {% endfor %}
+        {% else %}
+            <p>No package under your Amazon account.</p>
+            <br>
         {% endif %}
-        {% endif %}
-        {% if msg_ups is not None %}
-        <p>{{msg_ups}}</p>
-        {% endif %}
+    </tbody>
+    </table>
     </div>
-
-    <a href="{% url 'home' %}" class="btn btn-outline-secondary btn-sm">Home</a>
+    </div>
 </form>
 {% endblock content %}

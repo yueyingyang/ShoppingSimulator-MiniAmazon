@@ -1,7 +1,7 @@
 {% extends "./home.html" %}
 {% block content %}
 {% load crispy_forms_tags %}
-<h5 class="card-title">Welcome to register as a member!</h5>
+<h3 class="card-title">Welcome to register as a member!</h3>
 <form method="POST">
     {% csrf_token %}
 
@@ -9,7 +9,7 @@
     <button class="btn btn-outline-info" type="submit" name="prime" value="prime">Register</button>
     {% else %}
     <p>{{msg}}</p>
-    <a href="{% url 'home' %}" class="btn btn-outline-secondary btn-sm">Home</a>
+    {% comment %} <a href="{% url 'home' %}" class="btn btn-outline-secondary btn-sm">Home</a> {% endcomment %}
     {% endif %}
 </form>
 {% endblock content %}

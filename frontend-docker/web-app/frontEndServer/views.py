@@ -29,6 +29,7 @@ def buy(request):
     model = Product
     products = Product.objects.all().order_by('id')
     showid = None
+    error = None
     if request.method == 'POST':
         if 'checkout' in request.POST:
             if 'choose' in request.POST: 
@@ -49,33 +50,41 @@ def buy(request):
                 buy_str = ";".join(buy_list)
                 print("buy_str: " + buy_str)
                 # add to db
-                pkg = Package.objects.create(item_str = buy_str, user=request.user)
+                if request.POST['addr_x'] == "" or request.POST['addr_y'] == "":
+                    context = {'products': products, 'showid':None, 'error': "Please enter address!"}
+                    return render(request, 'frontEndServer/display.html', context) 
+                pkg = Package.objects.create(item_str = buy_str, user=request.user, addr_x=request.POST['addr_x'], addr_y=request.POST['addr_y'])
                 pkg.save()
                 print(pkg.id)
                 showid = pkg.id
-                s = connect_amazon()
-                print("================== socket =================")
-                print(s)
-                with s:
-                    s.sendall(str(pkg.id).encode('utf-8'))
-                    # to be more robust
-                    print("finish sending")
-                # return redirect('home')
                 if 'ups' in request.POST and request.POST['ups'] != '':
                     Package.objects.filter(id = showid).update(upsAccount = request.POST['ups'])  
-    context = {'products': products, 'showid':showid}
+                try:
+                    s = connect_amazon()
+                    print("================== socket =================")
+                    print(s)
+                    with s:
+                        s.sendall(str(pkg.id).encode('utf-8'))
+                        # to be more robust
+                        print("finish sending")
+                except BaseException as e:
+                    context = {'products': products, 'showid':None, 'error': "Please check Amazon server is running and AMAZON_HOST in views.py."}
+                    return render(request, 'frontEndServer/display.html', context) 
+            else:
+                error = 'Please select at least one product.'
+    context = {'products': products, 'showid':showid, 'error': error}
     return render(request, 'frontEndServer/display.html', context)
 
 
 def connect_amazon():
     amazon_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     amazon_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-    try:
-        amazon_socket.connect((AMAZON_HOST, AMAZON_PORT))
-        print('Connected to Amazon backend')
-        return amazon_socket
-    except:
-        print('Failed to connect to Amazon backend')
+    # try:
+    amazon_socket.connect((AMAZON_HOST, AMAZON_PORT))
+    print('Connected to Amazon backend')
+    return amazon_socket
+    # except:
+    #     print('Failed to connect to Amazon backend')
 
 pid = None
 uid = None
@@ -84,47 +93,63 @@ uid = None
 def query_status(request):
     info1 = None
     info2 = None
+    info3 = None
     msg_pkg = None
     msg_ups = None
     global pid
     global uid
     if request.method == 'POST':
-        #if use pkg id to query
         if 'button1' in request.POST:
-            if 'pkg' in request.POST and request.POST['pkg'] != '':  
-                if Package.objects.filter(id = request.POST['pkg']).exists():
-                    pid = request.POST['pkg']
-                    info1 = Package.objects.get(id = request.POST['pkg'])
-                else:
-                    msg_pkg = 'Sorry. Not Found.'
+            if 'pkg' in request.POST and request.POST['pkg'] != '':
+                try:
+                    if Package.objects.filter(user = request.user, id = request.POST['pkg']).exists():
+                        pid = request.POST['pkg']
+                        info1 = Package.objects.get(id = pid)
+                    else:
+                        msg_pkg = 'Sorry. This package ID #' + request.POST['pkg'] + ' is not found.'
+                except:
+                    msg_pkg = 'Sorry. Your input is not a number.'
 
         if 'button2' in request.POST:
             if 'ups' in request.POST and request.POST['ups'] != '': 
                 print("*********************UPS Account********************")
                 print(request.POST['ups']) 
-                if Package.objects.filter(upsAccount = request.POST['ups']).exists():
+                if Package.objects.filter(user = request.user, upsAccount = request.POST['ups']).exists():
                     uid = request.POST['ups']
                     print("*********************UPS Account********************")
                     print(uid)
-                    it = Package.objects.filter(upsAccount = uid).values('id')
+                    it = Package.objects.filter(user = request.user, upsAccount = uid).values('id').order_by('-id')
                     print("*********************UPS package********************")
                     print(it)
                     info2 = []
                     for value in it:
-                        info2.append(Package.objects.get(id = value['id']))
-                    
+                        info2.append(Package.objects.get(id = value['id']))  
                 else:
-                    msg_ups = 'Sorry. Not Found.'
+                    msg_ups = 'Sorry. This UPS account #' + request.POST['ups'] + ' is not found.'
         
         if 'return1' in request.POST:
             Package.objects.filter(id = pid).update(status = 9)
             msg_pkg = 'Your Package #' + pid +' has been cancelled Successfuly.'
       
         if 'return2' in request.POST:
-            Package.objects.filter(id = uid).update(status = 9)
-            msg_ups = 'Your Package #' + uid +' has been cancelled Successfuly.'
+            if 'ups_cancel_check' in request.POST and request.POST['ups_cancel_check'] != '':
+                print("******************************UPS Cancel******************************")
+                print(request.POST.getlist('ups_cancel_check'))
+                print("******************************UPS Cancel End**************************")
+                pid_list = request.POST.getlist('ups_cancel_check')
+                for thisid in pid_list:
+                    Package.objects.filter(id = thisid).update(status = 9)
+                pid_str = ', '.join(pid_list)
+                msg_ups = 'Your package #' + pid_str +' has been cancelled Successfuly.'
+            else:
+                msg_ups = 'No package is cancelled.'
 
-    context = {'info1': info1, 'msg_pkg' : msg_pkg,'info2': info2, 'msg_ups' : msg_ups}
+    all_order = Package.objects.filter(user = request.user).values('id').order_by('-id')
+    if all_order.exists():
+        info3 = []
+        for value in all_order:
+            info3.append(Package.objects.get(id = value['id']))
+    context = {'info1': info1, 'msg_pkg' : msg_pkg,'info2': info2, 'msg_ups' : msg_ups, 'info3': info3}
     return render(request, 'frontEndServer/query.html', context)
 
 @login_required
@@ -136,25 +161,13 @@ def PrimeRegiseterView(request):
     if not prime:
         if request.method == 'POST':
             if 'prime' in request.POST:
-                my_user.objects.filter(email = user).update(prime = True)
-                msg = 'Cong! You have been successfully registered!'
+                try:
+                    my_user.objects.filter(email = user).update(prime = True)
+                    msg = 'Cong! You have been successfully registered!'
+                except:
+                    msg = 'Register error.'
     else:
         msg = 'You are a Prime member now.'
     context = {'msg': msg}
     return render(request, 'frontEndServer/prime_register.html', context)
             
-#     # else go to prime_detail page
-
-#     if not vehicle.objects.filter(driver=request.user).exists():
-#         if request.method == 'POST':
-#             form = DriverRegisterForm(request.POST)  # request.user.id,
-#             if form.is_valid():
-#                 fs = form.save()
-#                 fs.driver = request.user
-#                 fs.save()
-#                 return redirect('prime_detail')
-#         else:
-#             form = DriverRegisterForm()
-#         return render(request, 'frontEndServer/prime_register.html', {'form': form})
-#     else:
-#         return redirect('prime_detail')
