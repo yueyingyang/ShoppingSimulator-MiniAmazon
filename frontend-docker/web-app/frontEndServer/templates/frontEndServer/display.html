@@ -2,30 +2,45 @@
 {% block content %}
 {% load crispy_forms_tags %}
 
-<p>All Pruducts</p>
+<b>All Pruducts</b>
 <form method="POST" class="form">
     {% csrf_token %}
-    {% if products.exists %}
-    {% for item in products %}
-    <label class="form-check-label font-weight-bold" for="mycheck">{{item.description}}</label>
-    <input type="checkbox" id="mycheck" name="choose" value="{{ item.id }}">
-    <input type="number" id="count" name="count" min=1 value=1>
-    {% endfor %}
-    {% endif %}
-    <br>
-    <p>You can input your UPS Accout here</p>
-    <input type="text" id="ups" name="ups">
-
-
-
-    <br>
-    <div class="col-4">
-        <button class="btn btn-outline-info" type="submit" name="checkout" value="checkout">Check out</button>
+    <div>
+        {% if products.exists %}
+        {% for item in products %}
+        <label class="form-check-label font-weight-bold mb-2" for="mycheck">{{item.description}}</label>
+        <input type="checkbox" id="mycheck" name="choose" value="{{ item.id }}">
+        <input type="number" id="count" name="count" min=1 value=1>
+        {% endfor %}
+        {% endif %}
     </div>
+    <div>
+        <div class="form-group mb-2">
+            <label for="addr_x">Address X</label>
+            <input type="number" class="form-control" id="addr_x" name="addr_x" placeholder="Integer">
+        </div>
+        <div class="form-group mb-2">
+            <label for="addr_y">Address Y</label>
+            <input type="number" class="form-control" name="addr_y" id="addr_y" placeholder="Integer">
+        </div>
+    </div>
+
+    <div>
+        <p>You can input your UPS Accout here</p>
+        <input type="text" class="form-control" id="ups" name="ups" placeholder="UPS Account Name">
+    </div>
+    <button class="btn btn-outline-info" type="submit" name="checkout" value="checkout">Check out</button>
     <br>
     <br>
     {% if showid is not None %}
-    <p>Your package id (tracking number) is: {{showid}}</p>
+    <div class="alert alert-success" role="alert">
+        Your package id (tracking number) is: {{showid}}
+    </div>
+    {% endif %}
+    {% if error is not None %}
+    <div class="alert alert-danger" role="alert">
+        {{error}}
+    </div>
     {% endif %}
 </form>
 {% endblock content %}

@@ -49,33 +49,39 @@ def buy(request):
                 buy_str = ";".join(buy_list)
                 print("buy_str: " + buy_str)
                 # add to db
-                pkg = Package.objects.create(item_str = buy_str, user=request.user)
+                if request.POST['addr_x'] == "" or request.POST['addr_y'] == "":
+                    context = {'products': products, 'showid':None, 'error': "Please enter address!"}
+                    return render(request, 'frontEndServer/display.html', context) 
+                pkg = Package.objects.create(item_str = buy_str, user=request.user, addr_x=request.POST['addr_x'], addr_y=request.POST['addr_y'])
                 pkg.save()
                 print(pkg.id)
                 showid = pkg.id
-                s = connect_amazon()
-                print("================== socket =================")
-                print(s)
-                with s:
-                    s.sendall(str(pkg.id).encode('utf-8'))
-                    # to be more robust
-                    print("finish sending")
-                # return redirect('home')
                 if 'ups' in request.POST and request.POST['ups'] != '':
                     Package.objects.filter(id = showid).update(upsAccount = request.POST['ups'])  
-    context = {'products': products, 'showid':showid}
+                try:
+                    s = connect_amazon()
+                    print("================== socket =================")
+                    print(s)
+                    with s:
+                        s.sendall(str(pkg.id).encode('utf-8'))
+                        # to be more robust
+                        print("finish sending")
+                except BaseException as e:
+                    context = {'products': products, 'showid':None, 'error': "Please check Amazon server is running and AMAZON_HOST in views.py."}
+                    return render(request, 'frontEndServer/display.html', context) 
+    context = {'products': products, 'showid':showid, 'error': None}
     return render(request, 'frontEndServer/display.html', context)
 
 
 def connect_amazon():
     amazon_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     amazon_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-    try:
-        amazon_socket.connect((AMAZON_HOST, AMAZON_PORT))
-        print('Connected to Amazon backend')
-        return amazon_socket
-    except:
-        print('Failed to connect to Amazon backend')
+    # try:
+    amazon_socket.connect((AMAZON_HOST, AMAZON_PORT))
+    print('Connected to Amazon backend')
+    return amazon_socket
+    # except:
+    #     print('Failed to connect to Amazon backend')
 
 pid = None
 uid = None
