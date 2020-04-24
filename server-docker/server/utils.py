@@ -80,4 +80,7 @@ def send_email(receiver, id, status, socket, sender):
     msg['From'] = email_sender
     msg['To'] = receiver
     msg['Subject'] = 'Your pakage #' + str(id) + ' is ' + status
-    email_socket.sendmail(email_sender, receiver, msg.as_string())
+    try:
+        email_socket.sendmail(email_sender, receiver, msg.as_string())
+    except:
+        pass

@@ -30,9 +30,16 @@ def connect_db():
     return db
 
 def setup_email():
-    context=ssl.create_default_context()
-    sender = 'yueyingyang22@gmail.com'
-    s = smtplib.SMTP('smtp.gmail.com', 587)
-    s.starttls(context=context)
-    s.login(sender, '12345678xiaomila')
-    return s, sender   
+    try:
+        context=ssl.create_default_context()
+        sender = 'yueyingyang22@gmail.com'
+        s = smtplib.SMTP(host = 'smtp.gmail.com', port = 587, timeout=7200)
+        s.starttls(context=context)
+        s.login(sender, '12345678xiaomila')
+        return s, sender  
+    except smtplib.SMTPException:
+        print("Email setup failed")
+        pass
+    except smtplib.socket.error:
+        print("Email setup failed")
+        pass 

@@ -99,10 +99,20 @@ def query_status(request):
                     msg_pkg = 'Sorry. Not Found.'
 
         if 'button2' in request.POST:
-            if 'ups' in request.POST and request.POST['ups'] != '':  
+            if 'ups' in request.POST and request.POST['ups'] != '': 
+                print("*********************UPS Account********************")
+                print(request.POST['ups']) 
                 if Package.objects.filter(upsAccount = request.POST['ups']).exists():
                     uid = request.POST['ups']
-                    info2 = Package.objects.get(upsAccount = request.POST['ups'])
+                    print("*********************UPS Account********************")
+                    print(uid)
+                    it = Package.objects.filter(upsAccount = uid).values('id')
+                    print("*********************UPS package********************")
+                    print(it)
+                    info2 = []
+                    for value in it:
+                        info2.append(Package.objects.get(id = value['id']))
+                    
                 else:
                     msg_ups = 'Sorry. Not Found.'
         

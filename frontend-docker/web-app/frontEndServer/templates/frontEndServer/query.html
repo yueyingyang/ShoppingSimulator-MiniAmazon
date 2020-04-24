@@ -27,7 +27,9 @@
         <input type="text" id="ups" name="ups">
         <button class="btn btn-outline-info" type="submit" name="button2" value="button2">Query by UPS</button>
         {% if info2 is not None %}
-        <p>Your package status is: {{info2.get_status_display}}</p>
+        {% for item in info2 %}
+        <p>Your package status is: {{item.id}},{{item.get_status_display}}</p>
+        {% endfor %}
         {% if info2.status <= 4 %}
         <p>Do you want to cancel your order?</p>
         <button class="btn btn-outline-info" type="submit" name="return2" value="return2">Cancel order</button>

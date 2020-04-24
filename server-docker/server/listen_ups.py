@@ -61,6 +61,7 @@ def listen_ups(ups_socket, world_socket, db, world_acks, world_seqs, ups_acks, u
 
             if command.disconnection:
                 world_disconnect(world_socket)
+                email_socket.quit()
                 break
                 
 
