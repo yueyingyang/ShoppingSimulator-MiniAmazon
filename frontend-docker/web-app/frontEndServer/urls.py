@@ -6,11 +6,12 @@ from . import views
 
 urlpatterns = [
     # ex: /polls/
-    path('user_register/', views.UserRegister, name="user_register"),
     path('', views.home, name='home'),
+    path('user_register/', views.UserRegister, name="user_register"),
+    path('login/', auth_views.LoginView.as_view(template_name='frontEndServer/login.html'), name='login'),
+    path('logout/', auth_views.LogoutView.as_view(), name='logout'),
     path('buy/', views.buy, name='buy'),
     path('query/', views.query_status, name='query'),
-    path('login/', auth_views.LoginView.as_view(template_name='frontEndServer/login.html'), name='login'),
     path('prime_register/', views.PrimeRegiseterView, name='prime_register'),
 
     # # ex: /polls/5/

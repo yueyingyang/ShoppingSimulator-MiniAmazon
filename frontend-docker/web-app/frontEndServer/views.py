@@ -3,6 +3,7 @@ from .models import Product, Package, Warehouse, my_user
 from .forms import UserRegisterForm
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth import authenticate, login
 import socket
 
 AMAZON_HOST, AMAZON_PORT = "vcm-13659.vm.duke.edu", 23333

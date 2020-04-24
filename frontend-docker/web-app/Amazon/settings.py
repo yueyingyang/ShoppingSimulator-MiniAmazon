@@ -79,11 +79,11 @@ WSGI_APPLICATION = 'Amazon.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'hyldknqo',
-        'USER': 'hyldknqo',
-        'PASSWORD': 'GjSNFxYnzBlt76C67wXgteDYWh3e7IpL',
-        'HOST': 'rajje.db.elephantsql.com',
-        'PORT': 5432,
+        'NAME': 'amazon',
+        'USER': 'postgres',
+        'PASSWORD': 'abc123',
+        'HOST': '127.0.0.1',
+        'PORT': '5432',
     }
 }
 
