@@ -5,7 +5,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 import socket
 
-AMAZON_HOST, AMAZON_PORT = "vcm-13659.vm.duke.edu", 23333
+AMAZON_HOST, AMAZON_PORT = "vcm-12347.vm.duke.edu", 23333
 
 def UserRegister(request):
     if request.method == 'POST':
@@ -76,27 +76,66 @@ def connect_amazon():
     except:
         print('Failed to connect to Amazon backend')
 
+pid = None
+uid = None
+
 @login_required
 def query_status(request):
-    #form = queryStatus()
     info1 = None
     info2 = None
     msg_pkg = None
     msg_ups = None
+    global pid
+    global uid
     if request.method == 'POST':
         #if use pkg id to query
         if 'button1' in request.POST:
             if 'pkg' in request.POST and request.POST['pkg'] != '':  
                 if Package.objects.filter(id = request.POST['pkg']).exists():
+                    pid = request.POST['pkg']
                     info1 = Package.objects.get(id = request.POST['pkg'])
                 else:
                     msg_pkg = 'Sorry. Not Found.'
+
         if 'button2' in request.POST:
             if 'ups' in request.POST and request.POST['ups'] != '':  
                 if Package.objects.filter(upsAccount = request.POST['ups']).exists():
+                    uid = request.POST['ups']
                     info2 = Package.objects.get(upsAccount = request.POST['ups'])
                 else:
                     msg_ups = 'Sorry. Not Found.'
+        
+        if 'return1' in request.POST:
+            Package.objects.filter(id = pid).update(status = 9)
+            msg_pkg = 'Your Package #' + pid +' has been cancelled Successfuly.'
+      
+        if 'return2' in request.POST:
+            Package.objects.filter(id = uid).update(status = 9)
+            msg_ups = 'Your Package #' + uid +' has been cancelled Successfuly.'
+
     context = {'info1': info1, 'msg_pkg' : msg_pkg,'info2': info2, 'msg_ups' : msg_ups}
     return render(request, 'frontEndServer/query.html', context)
 
+# @login_required
+# def PrimeRegiseterView(request):
+#     # if not prime member, go to prime_register page
+#     user = request.user
+#     prime = my_user.objects.get(id = request.user).prime
+#     if not prime:
+#         if request.method == 'POST':
+            
+#     # else go to prime_detail page
+
+#     if not vehicle.objects.filter(driver=request.user).exists():
+#         if request.method == 'POST':
+#             form = DriverRegisterForm(request.POST)  # request.user.id,
+#             if form.is_valid():
+#                 fs = form.save()
+#                 fs.driver = request.user
+#                 fs.save()
+#                 return redirect('prime_detail')
+#         else:
+#             form = DriverRegisterForm()
+#         return render(request, 'frontEndServer/prime_register.html', {'form': form})
+#     else:
+#         return redirect('prime_detail')

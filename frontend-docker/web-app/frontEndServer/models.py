@@ -14,6 +14,7 @@ class my_user(AbstractUser):
     is_active = models.BooleanField(default=True)
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username']
+    prime = models.BooleanField(default=False)
 
     def __str__(self):
         return self.email

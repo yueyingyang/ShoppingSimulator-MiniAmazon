@@ -9,7 +9,16 @@
     <input type="text" id="pkg" name="pkg">
     <button class="btn btn-outline-info" type="submit" name="button1" value="button1">Query by ID</button>
     {% if info1 is not None %}
-        <p>Your package status is: {{info1.get_status_display}}</p>
+        <p>Your package status is: {{info1.id}}, {{info1.get_status_display}}</p>
+        <p>Your package status number is: {{info1.status}}</p>
+        {% if info1.status <= 4 %}
+            <p>Do you want to cancel your order?</p>
+            <button class="btn btn-outline-info" type="submit" name="return1" value="return1">Cancel order</button>
+        {% else %}
+            <p>Sorry you cannot cancel.</p>
+        {% endif %}
+        
+        
     {% endif %}
     {% if msg_pkg is not None %}
         <p>{{msg_pkg}}</p>
@@ -21,6 +30,10 @@
     <button class="btn btn-outline-info" type="submit" name="button2" value="button2">Query by UPS</button>
     {% if info2 is not None %}
         <p>Your package status is: {{info2.get_status_display}}</p>
+                {% if info2.status <= 4 %}
+            <p>Do you want to cancel your order?</p>
+            <button class="btn btn-outline-info" type="submit" name="return2" value="return2">Cancel order</button>
+        {% endif %}
     {% endif %}
     {% if msg_ups is not None %}
         <p>{{msg_ups}}</p>

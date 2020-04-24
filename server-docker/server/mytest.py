@@ -1,7 +1,7 @@
 import socket
-from toWorld import world_buy
+from to_world import world_buy
 from utils import getListfromStr
-from execTable import q_pkg_id, add_wh_info, find_near_wh, update_pkg_status
+from exec_db import q_pkg_id, add_wh_info, find_near_wh, update_pkg_status
 
 DJANGO_HOST, DJANGO_PORT = "vcm-12347.vm.duke.edu", 23333
 

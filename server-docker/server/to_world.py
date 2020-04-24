@@ -11,7 +11,7 @@ from google.protobuf.internal.decoder import _DecodeVarint32
 from google.protobuf.internal.encoder import _EncodeVarint
 
 from utils import my_send, my_recv
-from exec_db import update_pkg_status
+from exec_db import update_pkg_status, q_prime_by_sid
 
 SIMSPEED = 30000 * 3000
 RESEND_INTERVAL = 10
@@ -57,7 +57,12 @@ def world_pack(db, world_socket, world_acks, whnum, thing, shipid):
     for item in thing:
         go_pack.things.add(id=item.id, description=item.description,count=item.count)
     world_command.simspeed = SIMSPEED
-    my_send(world_socket, world_command)
+
+    # prime functionality
+    prime = q_prime_by_sid(db, shipid)
+    if prime:
+        world_command.simspeed = PRIME_SIMSPEED
+
     send_world(world_socket, world_command, seqnum, world_acks)
     # updatre status to packing
     update_pkg_status(db, 3, (shipid,))
@@ -75,9 +80,16 @@ def world_load(db, world_socket, whnum, truckid, sid_list, world_acks):
         go_load.truckid = truckid
         go_load.shipid = sid
         go_load.seqnum = seqnum
+        world_command.simspeed = SIMSPEED
+        # prime functionality
+        prime = q_prime_by_sid(db, shipid)
+        if prime:
+            world_command.simspeed = PRIME_SIMSPEED
+
         send_world(world_socket, world_command, seqnum, world_acks)
         # update status to loading
         update_pkg_status(db, 5, (sid,))
+
 
 def world_disconnect(world_socket):
     world_command = world_amazon_pb2.ACommands()
