@@ -24,6 +24,9 @@ def listen_ups(ups_socket, world_socket, db, world_acks, world_seqs, ups_acks, u
             print("---------------- Receive from UPS -------------\n")
             print(command)
             print("-----------------------------------------------\n")
+            for _ in command.ack:
+                ups_acks.add(_)
+                
             for user in command.usrVlid:
                 # avoid repeated handle
                 ack_back_ups(ups_socket, user.seqNum)
@@ -52,8 +55,6 @@ def listen_ups(ups_socket, world_socket, db, world_acks, world_seqs, ups_acks, u
                 ups_seqs.add(delivered.seqNum)
                 update_pkg_status(db, 8, delivered.shipId)
 
-            for _ in command.ack:
-                ups_acks.add(_)
 
             if command.disconnection:
                 world_disconnect(world_socket)

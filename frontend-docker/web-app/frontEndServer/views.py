@@ -5,7 +5,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 import socket
 
-AMAZON_HOST, AMAZON_PORT = "vcm-12347.vm.duke.edu", 23333
+AMAZON_HOST, AMAZON_PORT = "vcm-13659.vm.duke.edu", 23333
 
 def UserRegister(request):
     if request.method == 'POST':

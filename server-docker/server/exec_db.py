@@ -24,6 +24,10 @@ def find_near_wh(db, x, y):
 
 def update_pkg_status(db, status, pkg_id_list):
     cursor = db.cursor()
+    cursor.execute('SELECT STATUS FROM "frontEndServer_package" WHERE "id" = %s', ((pkg_id_list,)))
+    current_status = cursor.fetchone()[0]
+    if current_status > status:
+        return
     cursor.execute('UPDATE "frontEndServer_package" SET "status" = %s WHERE "id" = %s', (status, pkg_id_list))
     db.commit()
     print('[INFO][UPDATE PACKAGE] %s TO [%s]', pkg_id_list, status)

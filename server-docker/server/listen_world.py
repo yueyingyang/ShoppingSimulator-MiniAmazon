@@ -57,6 +57,9 @@ def listen_world(world_socket, ups_socket, db, world_acks, world_seqs, ups_acks,
             
             for come_ready in response.ready: # repeated APacked ready = 2;
                 ack_back_world(world_socket, come_ready.seqnum)
+                if come_ready.seqnum in world_seqs:
+                    continue
+                world_seqs.add(come_ready.seqnum)
                 # If pkg is cancelled, dont send pick up.
                 if q_pkg_id(db, come_ready.shipid)[5] == 9:
                     continue
@@ -70,6 +73,9 @@ def listen_world(world_socket, ups_socket, db, world_acks, world_seqs, ups_acks,
             
             for come_loaded in response.loaded: # repeated ALoaded loaded = 3;
                 ack_back_world(world_socket, come_loaded.seqnum)
+                if come_loaded.seqnum in world_seqs:
+                    continue
+                world_seqs.add(come_loaded.seqnum)
                 # update status to loaded
                 update_pkg_status(db, 6, (come_loaded.shipid,))
                 # tell ups to deliver

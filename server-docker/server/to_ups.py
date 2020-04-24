@@ -14,7 +14,6 @@ from to_world import world_load, world_buy
 from exec_db import q_pkg_id, update_pkg_status, find_near_wh, add_wh_info
 
 RESEND_INTERVAL = 10
-shiptruck_dict = dict()
 
 def infinite_sequence():
     num = 100
@@ -111,6 +110,5 @@ def au_deliver(db, ups_socket, loaded, ups_acks):
         seqnum = next(gen)
         deliver.loadReq.add(seqNum=seqnum, shipId=ship_list, truckId=q_pkg_id(db, sid)[1])   
         send_ups(ups_socket, deliver, seqnum, ups_acks)
+        update_pkg_status(db, 7, sid)
     # update status to delivering 
-    update_pkg_status(db, 7, (loaded.shipid,))
-        

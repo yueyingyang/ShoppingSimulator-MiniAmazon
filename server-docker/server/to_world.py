@@ -13,7 +13,7 @@ from google.protobuf.internal.encoder import _EncodeVarint
 from utils import my_send, my_recv
 from exec_db import update_pkg_status, q_prime_by_sid
 
-SIMSPEED = 30000 * 3000
+SIMSPEED = 100
 PRIME_SIMSPEED = 30000 * 3000
 RESEND_INTERVAL = 10
 
@@ -25,9 +25,11 @@ def infinite_sequence():
 gen = infinite_sequence()
 
 def send_world(world_socket, world_command, seqnum, world_acks):
+    print("----------------- Send to World ---------------")
+    my_send(world_socket, world_command)
     while not seqnum in world_acks:
-        print("----------------- Send to World ---------------")
         time.sleep(RESEND_INTERVAL)
+        print("----------------- Send to World ---------------")
         my_send(world_socket, world_command)
 
 # call when user check out from django
@@ -83,10 +85,9 @@ def world_load(db, world_socket, whnum, truckid, sid_list, world_acks):
         go_load.seqnum = seqnum
         world_command.simspeed = SIMSPEED
         # prime functionality
-        prime = q_prime_by_sid(db, shipid)
+        prime = q_prime_by_sid(db, sid)
         if prime:
             world_command.simspeed = PRIME_SIMSPEED
-
         send_world(world_socket, world_command, seqnum, world_acks)
         # update status to loading
         update_pkg_status(db, 5, (sid,))
@@ -147,9 +148,6 @@ def connect_world_id(socket, id, wh_info):
 def recv_world(socket):
     response = world_amazon_pb2.AResponses()
     response.ParseFromString(my_recv(socket))
-    print("---------------- Recv from World --------------\n")
-    print(response)
-    print("-----------------------------------------------\n")
     return response 
 
 # Process:
