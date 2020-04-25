@@ -1,0 +1,20 @@
+1. Assgin the nearest warehouse to delivery address in the backend server:
+For each package, amazon would choose the nearest warehouse to purchase and pack.
+
+2. Automatically cancel packages with invalid UPS account:
+After check with UPS, if Amazon find certain package is related with an invalid UPS account, Amazon will cancel this package, and send email to user.
+
+3. Register to be a prime member and enjoy fast service:
+Amazon user can register as a prime member and the simspeed will be higher than regular member, thus enjoying fast service.
+
+4. Send email in the backend server:
+In addition to sending email when package is cancelled due to validation failure, we would send email to user when the package is created, delivered.
+
+5. Cancel packages
+After querying packages by package id or ups account name, user could *cancel non-ready* (before packed) packages.
+
+6. Query all packages related to certain UPS account
+Also support cancel packages result if applicable(before packed).
+
+7. Gracefully disconnect
+If UPS send Amazon disconnect msg, we would gracefully disconnect with world.

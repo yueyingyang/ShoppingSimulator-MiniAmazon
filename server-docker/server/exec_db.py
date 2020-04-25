@@ -76,19 +76,21 @@ def insert_wh(db, x, y):
 
 
 def q_prime_by_sid(db, sid):
-    user = q_pkg_id(db, sid)[7]
     cursor = db.cursor()
-    cursor.execute('SELECT * FROM "frontEndServer_my_user" WHERE id = %s', (user,))
-    result = cursor.fetchall()
+    cursor.execute('SELECT user_id FROM "frontEndServer_package" WHERE id = %s', (sid,))
+    user = cursor.fetchone()
+    cursor.execute('SELECT prime FROM "frontEndServer_my_user" WHERE id = %s', (user,))
+    result = cursor.fetchone()
     print("**********************PRIME INFO***********************")
-    print(result[0][11])
-    return result[0][11]  
+    print(result[0])
+    return result[0]
 
 def q_email_by_sid(db, sid):
-    user = q_pkg_id(db, sid)[7]
     cursor = db.cursor()
-    cursor.execute('SELECT * FROM "frontEndServer_my_user" WHERE id = %s', (user,))
-    result = cursor.fetchall()  
+    cursor.execute('SELECT user_id FROM "frontEndServer_package" WHERE id = %s', (sid,))
+    user = cursor.fetchone()    
+    cursor.execute('SELECT email FROM "frontEndServer_my_user" WHERE id = %s', (user,))
+    result = cursor.fetchone()  
     print("**********************EMAIL INFO***********************")
-    print(result[0][8])
-    return result[0][8]     
+    print(result[0])
+    return result[0]   

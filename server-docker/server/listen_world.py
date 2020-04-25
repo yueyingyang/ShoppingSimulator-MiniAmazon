@@ -82,16 +82,4 @@ def listen_world(world_socket, ups_socket, db, world_acks, world_seqs, ups_acks,
                 print("tell ups to deliver")
                 threading.Thread(target=au_deliver, args=(db, ups_socket, come_loaded, ups_acks)).start()
                 
-                
-
-
-            '''
-            Maybe unnecessay
-            '''
-            for come_packagestatus in response.packagestatus:
-                ack_back_world(world_socket, come_packagestatus.seqnum)
-                # tell world query
-                packageid = come_packagestatus.packageid
-                status = come_packagestatus.status
-                # abstract and send back to front-end
 

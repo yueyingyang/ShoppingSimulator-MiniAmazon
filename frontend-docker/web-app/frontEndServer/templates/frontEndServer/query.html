@@ -4,10 +4,10 @@
 
 <form method="POST" class="form-inline mt-3">
     {% csrf_token %}
+<div>
     <div>
     <h3>Query your package Status</h3>
     <br>
-    <div>
         <div>
             {% comment %} Query box and button {% endcomment %}
             <div class="form-group mx-sm-3 mb-2">
@@ -80,52 +80,39 @@
             {% endif %}
         </div>
     </div>
-    </div>
 
     <div>
     <h3>All your orders</h3>
     <br>
-    <div>
-    {% comment %} <div>
-        <div class="alert alert-secondary" role="alert">
-            {% if info3 is not None %}
-                {% for item in info3 %}
-                    <p>#{{item.id}} : {{item.get_status_display}}</p> 
-                {% endfor %}
-            {%else%}
-                <p>No packages</p>
-                <br>
-            {% endif %}
-        </div>
-    </div> {% endcomment %}
-    <table class="table table-striped">
-    <thead>
-        <tr>
-        <th scope="col">#</th>
-        <th scope="col">Package Id</th>
-        <th scope="col">Status</th>
-        <th scope="col">UPS</th>
-        <th scope="col">Products</th>
-        </tr>
-    </thead>
-    <tbody>
         {% if info3 is not None %}
+            <table class="table table-striped">
+            <thead>
+                <tr>
+                <th scope="col">#</th>
+                <th scope="col">Package Id</th>
+                <th scope="col">Status</th>
+                <th scope="col">UPS</th>
+                <th scope="col">Products</th>
+                </tr>
+            </thead>
+            <tbody>
             {% for item in info3 %}
-            <tr>
-            <th scope="row">{{ forloop.counter}}</th>
-            <td>{{ item.id }}</td>
-            <td>{{ item.get_status_display  }}</td>
-            <td>{{ item.upsAccount}}</td>
-            <td>{{item.item_str}}</td>
-            </tr>
+                <tr>
+                <th scope="row">{{ forloop.counter}}</th>
+                <td>{{ item.id }}</td>
+                <td>{{ item.get_status_display  }}</td>
+                <td>{{ item.upsAccount}}</td>
+                <td>{{item.item_str}}</td>
+                </tr>
             {% endfor %}
+            </tbody>
+            </table>
         {% else %}
             <p>No package under your Amazon account.</p>
             <br>
         {% endif %}
-    </tbody>
-    </table>
     </div>
-    </div>
+
+</div>
 </form>
 {% endblock content %}

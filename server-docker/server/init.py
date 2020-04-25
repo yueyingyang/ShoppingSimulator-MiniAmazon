@@ -19,11 +19,18 @@ def init_ups_socket(UPS_HOST, UPS_PORT):
     return ups_socket
 
 def connect_db():
+    # db = psycopg2.connect(
+    #     database="amazon",
+    #     user="postgres",
+    #     password="abc123",
+    #     host="127.0.0.1",
+    #     port="5432",
+    # )
     db = psycopg2.connect(
-        database="amazon",
-        user="postgres",
-        password="abc123",
-        host="127.0.0.1",
+        database="fslryadt",
+        user="fslryadt",
+        password="buIwYtkXY2Anx2m0uo1HlRZUgTD51B1k",
+        host="drona.db.elephantsql.com",
         port="5432",
     )
     print("================ Connected to DB ==============\n")
