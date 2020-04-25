@@ -5,11 +5,14 @@ services:
       image: postgres
       environment:
         - POSTGRES_PASSWORD=GjSNFxYnzBlt76C67wXgteDYWh3e7IpL
-  ups:
+  amazon:
       build: ./server
       user: nobody
       command: bash -c "python3 ./run_server.py"
       expose:
         - "8000"
+        - "5555"
       depends_on:
         - db
+      ports:
+        - "5555:5555"
