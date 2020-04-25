@@ -23,7 +23,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = '^qbqw=7=du_*ywk4t1n#3z4=u3ma99njn@-2q4p6c1)rnmly(j'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['local host', 'web','vcm-12347.vm.duke.edu', 'vcm-13659.vm.duke.edu']
 

@@ -44,9 +44,10 @@ def setup_email():
         s.starttls(context=context)
         s.login(sender, '12345678xiaomila')
         return s, sender  
-    except smtplib.SMTPException:
-        print("Email setup failed")
+    except smtplib.SMTPException as e:
+        print(e)
+        print("smtplib.SMTPException")
         pass
-    except smtplib.socket.error:
-        print("Email setup failed")
+    except smtplib.socket.error as e:
+        print("smtplib.socket.error")
         pass 
